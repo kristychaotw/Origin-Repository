@@ -183,4 +183,4 @@ def page_not_found(error):
 	message={"error": True,"message": "500自訂的錯誤訊息"}
 	return jsonify(message), 500
 
-app.run(port=3000)
+app.run(host='0.0.0.0',port=3000)
