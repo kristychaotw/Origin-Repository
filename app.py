@@ -30,10 +30,10 @@ import os
 
 mydb = mysql.connector.connect(
     host="database-1.cohxynft1tdv.us-east-1.rds.amazonaws.com",
-    user=os.environ['DB_USER'],
-    password=os.environ['DB_PWD'],
-    # user=os.environ.get('DB_USER'),
-    # password=os.environ.get('DB_PWD'),
+    # user=os.environ['DB_USER'],
+    # password=os.environ['DB_PWD'],
+    user=os.environ.get('DB_USER'),
+    password=os.environ.get('DB_PWD'),
     database="travelSite"
 )
 print(mydb)
