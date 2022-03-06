@@ -36,7 +36,7 @@ mydb = mysql.connector.connect(
     host=secretDict['host'],
     user=secretDict['username'],
     password=secretDict['password'],
-    database="travelSite"
+    database="travelsite"
 )
 
 print(mydb)
