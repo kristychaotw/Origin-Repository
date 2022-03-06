@@ -28,6 +28,10 @@ def thankyou():
 import mysql.connector
 import os
 
+user=os.environ.get('DB_USER')
+password=os.environ.get('DB_PWD')
+print(user,password)
+
 mydb = mysql.connector.connect(
     host="database-1.cohxynft1tdv.us-east-1.rds.amazonaws.com",
     # user=os.environ['DB_USER'],
