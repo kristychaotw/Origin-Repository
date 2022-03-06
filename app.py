@@ -84,7 +84,7 @@ def get_secret():
             
     # Your code goes here. 
 
-result=jsonify(get_secret())
+result=get_secret()
 print("結果:",result)
 
 
