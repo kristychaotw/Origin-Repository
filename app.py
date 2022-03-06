@@ -73,56 +73,63 @@ def attractionsAPI():
 	print("搜尋字串結果:",p,kw,"kw型態:",type(kw))
 
 	col="id,name,category,description,address,transport,mrt,latitude,longitude,images"
-	nokwSelect="SELECT "+col+" FROM spotinfo10 ORDER BY id LIMIT 12 offset"+" "+str(p*12)
-	mycursor.execute(nokwSelect)
-	nokwDB=mycursor.fetchall()
-	# print("撈到資料:",nokwDB,"資料型態:",type(nokwDB),"長度:",len(nokwDB))
-	mycursor.execute("SELECT COUNT(*) FROM spotinfo10")
-	numsofRows=mycursor.fetchone()
-	print("提取資料筆數:",numsofRows)
-	lastPage=numsofRows[0]//12
-	print("最後一頁:",lastPage)
 	
 	def pick12Row(p):
-			spotData=[]
-			for n in range(0,len(nokwDB)):
-				# print("資料:",nokwDB[n][0],nokwDB[n][1],nokwDB[n][8])
-				idDB = nokwDB[n][0]
-				nameDB = nokwDB[n][1]
-				categoryDB = nokwDB[n][2]
-				descriptionDB = nokwDB[n][3]
-				addressDB = nokwDB[n][4]
-				transportDB = nokwDB[n][5]
-				mrtDB = nokwDB[n][6]
-				latitudeDB = nokwDB[n][7]
-				longitudeDB = nokwDB[n][8]
-				imagesDB = nokwDB[n][9].split(",")
-				# print("imagesDB內容:", imagesDB,"類型:",type(imagesDB))
-				spotData.append({
-					"id":idDB,
-					"name":nameDB,
-					"category":categoryDB,
-					"description":descriptionDB,
-					"address":addressDB,
-					"transport":transportDB,
-					"mrt":mrtDB,
-					"latitude":float(latitudeDB),
-					"longitude":float(longitudeDB),
-					"images":imagesDB[1:len(imagesDB)]
-					})
-			# print("spotData內容:",spotData, type(spotData))
-			result = [p+1,spotData]
-			# print("裡面的result:",result)
-			return (result)
+		mycursor.execute("SELECT COUNT(*) FROM spotinfo10")
+		numsofRows=mycursor.fetchone()
+		print("提取資料筆數:",numsofRows)
+		nokwLastPage=numsofRows[0]//12
+		print("無KW最後一頁:",nokwLastPage)
+
+		nokwSelect="SELECT "+col+" FROM spotinfo10 ORDER BY id LIMIT 12 offset"+" "+str(p*12)
+		mycursor.execute(nokwSelect)
+		nokwDB=mycursor.fetchall()
+		# print("撈到資料:",nokwDB,"資料型態:",type(nokwDB),"長度:",len(nokwDB))
+		spotData=[]
+		for n in range(0,len(nokwDB)):
+			# print("資料:",nokwDB[n][0],nokwDB[n][1],nokwDB[n][8])
+			idDB = nokwDB[n][0]
+			nameDB = nokwDB[n][1]
+			categoryDB = nokwDB[n][2]
+			descriptionDB = nokwDB[n][3]
+			addressDB = nokwDB[n][4]
+			transportDB = nokwDB[n][5]
+			mrtDB = nokwDB[n][6]
+			latitudeDB = nokwDB[n][7]
+			longitudeDB = nokwDB[n][8]
+			imagesDB = nokwDB[n][9].split(",")
+			# print("imagesDB內容:", imagesDB,"類型:",type(imagesDB))
+			spotData.append({
+				"id":idDB,
+				"name":nameDB,
+				"category":categoryDB,
+				"description":descriptionDB,
+				"address":addressDB,
+				"transport":transportDB,
+				"mrt":mrtDB,
+				"latitude":float(latitudeDB),
+				"longitude":float(longitudeDB),
+				"images":imagesDB[1:len(imagesDB)]
+				})
+		# print("spotData內容:",spotData, type(spotData))
+		# print("spotData資料長度:",len(spotData))
+		result = [p+1,spotData,nokwLastPage]
+		# print("裡面的result:",result)
+		return (result)
 
 	
 	def pick12RowKW(p):
 		kwSelect="SELECT "+col+" FROM spotinfo10 WHERE name LIKE '%"+kw+"%'" + " LIMIT 12 offset"+" "+str(p*12)
-		print(kwSelect)
+		# print(kwSelect)
 		mycursor.execute(kwSelect)
 		kwDB=mycursor.fetchall()
 		# print("關鍵字:",kwDB)
 		# print(len(kwDB))
+		mycursor.execute("SELECT COUNT(*) FROM spotinfo10 WHERE name LIKE '%"+kw+"%'")
+		numsofRows=mycursor.fetchone()
+		print("提取資料筆數:",numsofRows)
+		KWlastPage=numsofRows[0]//12
+		print("無KW最後一頁:",KWlastPage)
 
 		kwspotData=[]
 		for n in range(0,len(kwDB)):
@@ -139,8 +146,8 @@ def attractionsAPI():
 				"longitude":float(kwDB[n][8]),
 				"images":imagesDB2[1:len(imagesDB2)]
 				})
-		print("kwspotData的長度:",len(kwspotData))
-		dataPnKW = [p+1,kwspotData,len(kwspotData)]
+		# print("kwspotData的長度:",len(kwspotData))
+		dataPnKW = [p+1,kwspotData,KWlastPage]
 		return (dataPnKW)
 	
 
@@ -148,13 +155,13 @@ def attractionsAPI():
 # 判斷 1-1 : kw有輸入值
 	if kw != None:
 		dataPnKW=pick12RowKW(p)
-		print("有輸入關鍵字。kw是:",kw,"p是:",p)
-		# 判斷 1-2 : 頁數輸入值為有效整數 (非0、不超過有資料最後一頁)
+		print("有輸入關鍵字。kw是:",kw,"p是:",p,"最後一頁:",dataPnKW[2])
+		# 判斷 1-2 : 頁數輸入值為整數 
 		if p or p == 0:
-			# 判斷 1-3 : p指定在有資料的頁數
-			if p < dataPnKW[2]//12 :
+			# 判斷 1-3 : p < 最後一頁
+			if p < dataPnKW[2] :
 				return {"nextPage": dataPnKW[0],"data":dataPnKW[1]}
-			elif p == dataPnKW[2]//12:
+			elif p == dataPnKW[2]:
 				return {"nextPage": None,"data":dataPnKW[1]}
 			else:
 				return "error: 此頁數無資料"
@@ -163,13 +170,13 @@ def attractionsAPI():
 
 	else:
 		dataP=pick12Row(p)
-		print("沒有輸入關鍵字。kw是:",kw,"p是:",p)
+		print("沒有輸入關鍵字。kw是:",kw,"p是:",p,"最後一頁:",dataP[2])
 		# 判斷 2-1 : 頁數輸入值為整數
-		if p or p ==0:
-			# 判斷 2-2 : 頁數輸入值為有效整數 (0、不超過有資料最後一頁)
-			if p < 4:
-				return {"nextPage": dataP[0],"data":dataP[1]}
-			elif p==4:
+		if p or p == 0:
+			# 判斷 2-2 : p < 最後一頁
+			if p < dataP[2]:
+				return {"nextPage": dataP[0],"data":dataP[1]}		
+			elif p == dataP[2]:
 				return {"nextPage": None,"data":dataP[1]}		
 			else:
 				return "error: 此頁數無資料"
