@@ -32,12 +32,14 @@ client=boto3.client('secretsmanager')
 response=client.get_secret_value(SecretId='conSQL')
 
 secretDict=json.loads(response['SecretString'])
+print("印出來:",secretDict['host'],secretDict['username'],secretDict['password'])
 mydb = mysql.connector.connect(
     host=secretDict['host'],
     user=secretDict['username'],
     password=secretDict['password'],
     database="travelSite"
 )
+
 print(mydb)
 mycursor=mydb.cursor()
 
@@ -46,10 +48,6 @@ mycursor=mydb.cursor()
 # 資料庫連線
 # import mysql.connector
 # import os
-
-# user=os.environ.get('DB_USER')
-# password=os.environ.get('DB_PWD')
-# print(user,password)
 
 # mydb = mysql.connector.connect(
 #     host="database-1.cohxynft1tdv.us-east-1.rds.amazonaws.com",
