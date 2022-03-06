@@ -1,4 +1,6 @@
 # from asyncio.windows_events import NULL
+from asyncio.windows_events import NULL
+from types import NoneType
 from typing import final
 from flask import *
 from flask import jsonify
@@ -23,6 +25,7 @@ def thankyou():
 
 
 #=============================================================
+# 雲端資料庫連線
 
 import mysql.connector
 import boto3
@@ -42,7 +45,7 @@ mydb = mysql.connector.connect(
 print(mydb)
 mycursor=mydb.cursor()
 
-#========================================原版=========================================
+#========================================本機版資料庫連線=========================================
 
 # 資料庫連線
 # import mysql.connector
@@ -54,63 +57,65 @@ mycursor=mydb.cursor()
 #     # password=os.environ['DB_PWD'],
 #     user=os.environ.get('DB_USER'),
 #     password=os.environ.get('DB_PWD'),
-#     database="travelSite"
+#     database="travelsite"
 # )
 # print(mydb)
 # mycursor=mydb.cursor()
 
-#=========================================原版結束=============================
+#=========================================本機版結束=============================
 
 # APIs
 @app.route("/api/attractions")
 def attractionsAPI():
 	page=request.args.get("page",None)
-	p=int(page or 0)
+	p=int(page or 0) # 輸入值從字串傳成數字
 	kw=request.args.get("keyword",None)
+	print("搜尋字串結果:",p,kw,"kw型態:",type(kw))
+
 	col="id,name,category,description,address,transport,mrt,latitude,longitude,images"
-	print("搜尋字串結果:",p,kw)
-
-
+	nokwSelect="SELECT "+col+" FROM spotinfo10 ORDER BY id LIMIT 12 offset"+" "+str(p*12)
+	mycursor.execute(nokwSelect)
+	nokwDB=mycursor.fetchall()
+	# print("撈到資料:",nokwDB,"資料型態:",type(nokwDB),"長度:",len(nokwDB))
+	mycursor.execute("SELECT COUNT(*) FROM spotinfo10")
+	numsofRows=mycursor.fetchone()
+	print("提取資料筆數:",numsofRows)
+	lastPage=numsofRows[0]//12
+	print("最後一頁:",lastPage)
+	
 	def pick12Row(p):
-		# mycursor.execute("select count(*) from spotinfo10 ORDER BY id LIMIT 12")
-		# print(list(mycursor))
-		nokwSelect="SELECT "+col+" FROM spotinfo10 ORDER BY id LIMIT 12 offset"+" "+str(p*12)
-		mycursor.execute(nokwSelect)
-		nokwDB=mycursor.fetchall()
-		# print("頁數:",p,"關鍵字:",kw)
-		# print("撈到資料:",nokwDB,"資料型態:",type(nokwDB),"長度:",len(nokwDB))
-		spotData=[]
-		for n in range(0,len(nokwDB)):
-			# print("資料:",nokwDB[n][0],nokwDB[n][1],nokwDB[n][8])
-			idDB = nokwDB[n][0]
-			nameDB = nokwDB[n][1]
-			categoryDB = nokwDB[n][2]
-			descriptionDB = nokwDB[n][3]
-			addressDB = nokwDB[n][4]
-			transportDB = nokwDB[n][5]
-			mrtDB = nokwDB[n][6]
-			latitudeDB = nokwDB[n][7]
-			longitudeDB = nokwDB[n][8]
-			imagesDB = nokwDB[n][9].split(",")
-			# print("imagesDB內容:", imagesDB,"類型:",type(imagesDB))
-			spotData.append({
-				"id":idDB,
-				"name":nameDB,
-				"category":categoryDB,
-				"description":descriptionDB,
-				"address":addressDB,
-				"transport":transportDB,
-				"mrt":mrtDB,
-				"latitude":float(latitudeDB),
-				"longitude":float(longitudeDB),
-				"images":imagesDB[1:len(imagesDB)]
-				})
-		# print("spotData內容:",spotData, type(spotData))
-		result = {"nextPage": p+1,"data":spotData}
-		# print("裡面的result:",result)
-		return (result)
+			spotData=[]
+			for n in range(0,len(nokwDB)):
+				# print("資料:",nokwDB[n][0],nokwDB[n][1],nokwDB[n][8])
+				idDB = nokwDB[n][0]
+				nameDB = nokwDB[n][1]
+				categoryDB = nokwDB[n][2]
+				descriptionDB = nokwDB[n][3]
+				addressDB = nokwDB[n][4]
+				transportDB = nokwDB[n][5]
+				mrtDB = nokwDB[n][6]
+				latitudeDB = nokwDB[n][7]
+				longitudeDB = nokwDB[n][8]
+				imagesDB = nokwDB[n][9].split(",")
+				# print("imagesDB內容:", imagesDB,"類型:",type(imagesDB))
+				spotData.append({
+					"id":idDB,
+					"name":nameDB,
+					"category":categoryDB,
+					"description":descriptionDB,
+					"address":addressDB,
+					"transport":transportDB,
+					"mrt":mrtDB,
+					"latitude":float(latitudeDB),
+					"longitude":float(longitudeDB),
+					"images":imagesDB[1:len(imagesDB)]
+					})
+			# print("spotData內容:",spotData, type(spotData))
+			result = [p+1,spotData]
+			# print("裡面的result:",result)
+			return (result)
 
-
+	
 	def pick12RowKW(p):
 		kwSelect="SELECT "+col+" FROM spotinfo10 WHERE name LIKE '%"+kw+"%'" + " LIMIT 12 offset"+" "+str(p*12)
 		print(kwSelect)
@@ -134,19 +139,44 @@ def attractionsAPI():
 				"longitude":float(kwDB[n][8]),
 				"images":imagesDB2[1:len(imagesDB2)]
 				})
-		result = {"nextPage": p+1,"data":kwspotData}
-		return (result)
+		print("kwspotData的長度:",len(kwspotData))
+		dataPnKW = [p+1,kwspotData,len(kwspotData)]
+		return (dataPnKW)
+	
 
 
+# 判斷 1-1 : kw有輸入值
 	if kw != None:
-		
-		finalData=pick12RowKW(p)
-		return jsonify(finalData)
+		dataPnKW=pick12RowKW(p)
+		print("有輸入關鍵字。kw是:",kw,"p是:",p)
+		# 判斷 1-2 : 頁數輸入值為有效整數 (非0、不超過有資料最後一頁)
+		if p or p == 0:
+			# 判斷 1-3 : p指定在有資料的頁數
+			if p < dataPnKW[2]//12 :
+				return {"nextPage": dataPnKW[0],"data":dataPnKW[1]}
+			elif p == dataPnKW[2]//12:
+				return {"nextPage": None,"data":dataPnKW[1]}
+			else:
+				return "error: 此頁數無資料"
+		else:
+			return "error: 頁數輸入值不是整數，無效"
 
-		
 	else:
-		finalData=pick12Row(p)
-		return jsonify(finalData)
+		dataP=pick12Row(p)
+		print("沒有輸入關鍵字。kw是:",kw,"p是:",p)
+		# 判斷 2-1 : 頁數輸入值為整數
+		if p or p ==0:
+			# 判斷 2-2 : 頁數輸入值為有效整數 (0、不超過有資料最後一頁)
+			if p < 4:
+				return {"nextPage": dataP[0],"data":dataP[1]}
+			elif p==4:
+				return {"nextPage": None,"data":dataP[1]}		
+			else:
+				return "error: 此頁數無資料"
+			
+		else:
+			return "error: 頁數輸入值不是整數，無效"
+
 
 
 
