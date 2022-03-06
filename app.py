@@ -72,9 +72,9 @@ def attractionsAPI():
 
 
 	def pick12Row(p):
-		# mycursor.execute("select count(*) from spotInfo10 ORDER BY id LIMIT 12")
+		# mycursor.execute("select count(*) from spotinfo10 ORDER BY id LIMIT 12")
 		# print(list(mycursor))
-		nokwSelect="SELECT "+col+" FROM spotInfo10 ORDER BY id LIMIT 12 offset"+" "+str(p*12)
+		nokwSelect="SELECT "+col+" FROM spotinfo10 ORDER BY id LIMIT 12 offset"+" "+str(p*12)
 		mycursor.execute(nokwSelect)
 		nokwDB=mycursor.fetchall()
 		# print("頁數:",p,"關鍵字:",kw)
@@ -112,7 +112,7 @@ def attractionsAPI():
 
 
 	def pick12RowKW(p):
-		kwSelect="SELECT "+col+" FROM spotInfo10 WHERE name LIKE '%"+kw+"%'" + " LIMIT 12 offset"+" "+str(p*12)
+		kwSelect="SELECT "+col+" FROM spotinfo10 WHERE name LIKE '%"+kw+"%'" + " LIMIT 12 offset"+" "+str(p*12)
 		print(kwSelect)
 		mycursor.execute(kwSelect)
 		kwDB=mycursor.fetchall()
@@ -154,7 +154,7 @@ def attractionsAPI():
 def attractionAPI(attractionID):
 	col="id,name,category,description,address,transport,mrt,latitude,longitude,images"
 	# print("id為:",attractionID,"id換數字",(int(attractionID)))
-	mycursor.execute("SELECT COUNT(*) FROM spotInfo10")
+	mycursor.execute("SELECT COUNT(*) FROM spotinfo10")
 	numsofRows=mycursor.fetchone()
 	# print("資料筆數:",numsofRows[0],type(numsofRows[0]))
 	
@@ -162,7 +162,7 @@ def attractionAPI(attractionID):
 	if int(attractionID):
 		# 判斷 2 : 輸入值為有效整數 (非0、非超過資料筆數)
 		if int(attractionID) != 0 and int(attractionID) <= numsofRows[0]:
-			idSelect="SELECT "+col+" FROM spotInfo10 WHERE id = "+attractionID+""
+			idSelect="SELECT "+col+" FROM spotinfo10 WHERE id = "+attractionID+""
 			mycursor.execute(idSelect)
 			dataDBId=mycursor.fetchall()
 			# print(idSelect)
