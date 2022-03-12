@@ -4,7 +4,7 @@
 # from typing import final
 from flask import *
 from flask import jsonify
-app=Flask(__name__)
+app=Flask(__name__, static_folder="public",static_url_path="/")
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 app.config['JSON_SORT_KEYS'] = False
@@ -52,12 +52,13 @@ mycursor=mydb.cursor()
 # import os
 
 # mydb = mysql.connector.connect(
-#     host="database-1.cohxynft1tdv.us-east-1.rds.amazonaws.com",
+#     host="localhost",
 #     # user=os.environ['DB_USER'],
 #     # password=os.environ['DB_PWD'],
 #     user=os.environ.get('DB_USER'),
 #     password=os.environ.get('DB_PWD'),
-#     database="travelsite"
+#     database="travelsite",
+# 	port="3306"
 # )
 # print(mydb)
 # mycursor=mydb.cursor()
@@ -70,16 +71,16 @@ def attractionsAPI():
 	page=request.args.get("page",None)
 	p=int(page or 0) # 輸入值從字串傳成數字
 	kw=request.args.get("keyword",None)
-	print("搜尋字串結果:",p,kw,"kw型態:",type(kw))
+	# print("搜尋字串結果:",p,kw,"kw型態:",type(kw))
 
 	col="id,name,category,description,address,transport,mrt,latitude,longitude,images"
 	
 	def pick12Row(p):
 		mycursor.execute("SELECT COUNT(*) FROM spotinfo10")
 		numsofRows=mycursor.fetchone()
-		print("提取資料筆數:",numsofRows)
+		# print("提取資料筆數:",numsofRows)
 		nokwLastPage=numsofRows[0]//12
-		print("無KW最後一頁:",nokwLastPage)
+		# print("無KW最後一頁:",nokwLastPage)
 
 		nokwSelect="SELECT "+col+" FROM spotinfo10 ORDER BY id LIMIT 12 offset"+" "+str(p*12)
 		mycursor.execute(nokwSelect)
@@ -245,3 +246,4 @@ def page_not_found(error):
 	return jsonify(message), 500
 
 app.run(host='0.0.0.0',port=3000)
+# app.run(port=3000)
