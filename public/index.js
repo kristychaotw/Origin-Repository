@@ -1,13 +1,37 @@
+// 全域變數，檢查fetch執行的狀態
+let fetching = false;
+console.log("fetching is:",fetching);
+
+
 // 函式1 : 執行fetch，變動的page和kw用函式參數代入
+// function getData(loadPage,KW){
+
+    
+//     let src=`/api/attractions?page=${loadPage}&keyword=${KW}`
+//     // let src="/api/attractions?page="+loadPage+"&keyword="+KW+""
+//     fetch(src)
+//     .then(response => response.json())
+//     .then(data => { loadData(data)    
+//     })
+// }
+
 function getData(loadPage,KW){
+
+    if(fetching != true){
     let src=`/api/attractions?page=${loadPage}&keyword=${KW}`
     // let src="/api/attractions?page="+loadPage+"&keyword="+KW+""
+    fetching = true
     fetch(src)
     .then(response => response.json())
     .then(data => { loadData(data)    
+    fetching = false
+    console.log("完成fetching");
     })
+    }else{
+        console.log("不做任何事");
+    // fetching = false
+    }
 }
-
 
 // 函式2 : 拿到fetch傳回資料，開始做盒子
 function loadData(data){
