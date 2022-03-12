@@ -14,58 +14,62 @@ function loadData(data){
     console.log("nextPate:",data.nextPage)
     console.log("API回傳:",data);
     // console.log("長度:",data.data.length);
-    let name;
-    let MRT;
-    let type;
-    let img;
-    for (let i=0;i<data.data.length;i++){
-        name=data.data[i].name
-        MRT=data.data[i].mrt
-        type=data.data[i].category
-        img=data.data[i].images[0]
-        console.log(name,MRT,type,img);
+    if ( data.data[0] == null){
+        document.getElementById("boxGroup").innerHTML="無此景點資料"
+    }else{
+        let name;
+        let MRT;
+        let type;
+        let img;
+        for (let i=0;i<data.data.length;i++){
+            name=data.data[i].name
+            MRT=data.data[i].mrt
+            type=data.data[i].category
+            img=data.data[i].images[0]
+            console.log(name,MRT,type,img);
 
-        // 做盒子
-        num=(data.nextPage-1)*12+(i+1)
-        const div1=document.createElement("div")
-        div1.classList.add("box", "box"+num+"");
-        const div2=document.createElement("div")
-        div2.classList.add("imgBox", "imgBox"+num+"");
-        const div3=document.createElement("div")
-        div3.classList.add("txtBox", "txtBox"+num+"");
-        const div4=document.createElement("div")
-        div4.classList.add("spotName");
-        const div5=document.createElement("div")
-        div5.classList.add("spotMRT");
-        const div6=document.createElement("div")
-        div6.classList.add("spotType");
-        document.querySelector(".boxGroup").appendChild(div1)
-        document.querySelector(".box"+num+"").appendChild(div2)
-        document.querySelector(".box"+num+"").appendChild(div3)
-        document.querySelector(".txtBox"+num+"").appendChild(div4)
-        document.querySelector(".txtBox"+num+"").appendChild(div5)
-        document.querySelector(".txtBox"+num+"").appendChild(div6)
-        console.log("做好的盒子:",div1);
+            // 做盒子
+            num=(data.nextPage-1)*12+(i+1)
+            const div1=document.createElement("div")
+            div1.classList.add("box", "box"+num+"");
+            const div2=document.createElement("div")
+            div2.classList.add("imgBox", "imgBox"+num+"");
+            const div3=document.createElement("div")
+            div3.classList.add("txtBox", "txtBox"+num+"");
+            const div4=document.createElement("div")
+            div4.classList.add("spotName");
+            const div5=document.createElement("div")
+            div5.classList.add("spotMRT");
+            const div6=document.createElement("div")
+            div6.classList.add("spotType");
+            document.querySelector(".boxGroup").appendChild(div1)
+            document.querySelector(".box"+num+"").appendChild(div2)
+            document.querySelector(".box"+num+"").appendChild(div3)
+            document.querySelector(".txtBox"+num+"").appendChild(div4)
+            document.querySelector(".txtBox"+num+"").appendChild(div5)
+            document.querySelector(".txtBox"+num+"").appendChild(div6)
+            console.log("做好的盒子:",div1);
 
 
-        // 資料塞到盒子
-        let newBox =".box"+[(data.nextPage-1)*12+(i+1)]
-        console.log('this is newBox',newBox)
-        let newName = document.createTextNode (name);
-        document.querySelector(""+newBox+">.txtBox>.spotName").appendChild(newName)
-        let newMRT = document.createTextNode (MRT);
-        document.querySelector(""+newBox+">.txtBox>.spotMRT").appendChild(newMRT)
-        let newType = document.createTextNode (type);
-        document.querySelector(""+newBox+">.txtBox>.spotType").appendChild(newType)
-        let imgBox = document.querySelector(""+newBox+">.imgBox")
-        // console.log("this is imgBox:",imgBox);
-        imgBox.style.backgroundImage = "url(" + img + ")";
-        // console.log("final url:",imgBox);
-        
-        // 把NextPage資訊傳回去
-        let NP =data.nextPage
-        console.log("傳回去的NP:",NP);
-        getnP(NP)
+            // 資料塞到盒子
+            let newBox =".box"+[(data.nextPage-1)*12+(i+1)]
+            console.log('this is newBox',newBox)
+            let newName = document.createTextNode (name);
+            document.querySelector(""+newBox+">.txtBox>.spotName").appendChild(newName)
+            let newMRT = document.createTextNode (MRT);
+            document.querySelector(""+newBox+">.txtBox>.spotMRT").appendChild(newMRT)
+            let newType = document.createTextNode (type);
+            document.querySelector(""+newBox+">.txtBox>.spotType").appendChild(newType)
+            let imgBox = document.querySelector(""+newBox+">.imgBox")
+            // console.log("this is imgBox:",imgBox);
+            imgBox.style.backgroundImage = "url(" + img + ")";
+            // console.log("final url:",imgBox);
+            
+            // 把NextPage資訊傳回去
+            let NP =data.nextPage
+            console.log("傳回去的NP:",NP);
+            getnP(NP)
+        }
     }    
 }
 
