@@ -1,0 +1,345 @@
+body,header,nav,section,footer,h1,h2,h3,h4,h5,h6,p,ul,li,input,label,.span{
+    padding:0;
+    margin:0
+}
+
+
+body{
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size:16px;
+}
+
+ul{
+    list-style: none;
+}
+
+li{
+    text-decoration: none;
+}
+
+ul>li>a{
+    text-decoration: none;
+}
+
+.container-fluid{
+    width: 100%;
+    max-width: 1200px;
+    margin:auto;
+}
+
+/* 待確認//stage1第二周作業是90% */
+.container{
+    width: 90%;
+    margin:auto;
+    max-width: 1200px;
+}
+
+
+header{
+    position: sticky;
+    top:0;
+    left: 0;
+    background-color: #fff;
+    z-index: 99;
+}
+
+
+header>.container-fluid{
+  height: 34px;
+  padding:10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav>ul{
+    display: flex;
+}
+nav>ul>li{
+    padding:10px;
+}
+    
+.webName>h1{
+    font-weight: 700;
+    font-size: 30px;
+    color:#448899;
+}
+
+nav>ul>li>a{
+    font-weight: 400;
+    font-size: 16px;
+    color:#666666
+}
+
+footer{
+    margin:auto;
+    height: 104px;
+    background-color: #757575;
+}
+footer>h6{
+    color:#ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 104px;
+    text-align: center;
+}
+
+/* 內容 */
+.mainContent>.container{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    grid-template-areas:"carousel card"
+                        "hr hr"
+                        "spotInfo spotInfo";
+    grid-column-gap: 30px;
+}
+
+@media screen and (max-width: 992px) {
+    .mainContent>.container{
+        display: grid;
+        grid-template-columns: repeat(1,1fr);
+        grid-template-areas:"carousel" 
+                            "card"
+                            "hr"
+                            "spotInfo";
+    }
+    .card{
+        margin-top: 0;
+    }
+}
+
+.next{
+    width: 35px;
+    position: absolute;
+    right: 5px;
+    top: calc(50% - 17px);
+}
+.previous{
+    width: 35px;
+    position: absolute;
+    position: absolute;
+    left: 5px;
+    top: calc(50% - 17px);
+}
+
+.carousel{
+    grid-area: carousel;
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;   
+}
+
+
+.slideWrapper{
+    position: relative;
+    max-height: 406px;
+    width: 100%;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.slideContent{
+    display: flex;
+    margin-left: 0px;
+    width: max-content;
+}
+
+/* .slide{
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+} */
+
+.slide{
+    height: 406px;
+    width: 585px;
+}
+
+@media screen and (max-width:992px) {
+    .slide{
+        height: 406px;
+        min-width: 992px;
+        width: 100%;
+    }
+    
+}
+
+@media screen and (max-width:792px) {
+    .slide{
+        height: 406px;
+        min-width: 792px;
+        width: 100%;
+    }
+    
+}
+@media screen and (max-width:600px) {
+    .slide{
+        height: 406px;
+        min-width: 600px;
+        width: 100%;
+    }
+    
+}
+
+.slide > img{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    /* box-sizing: border-box; */
+}
+
+
+.dot{
+    display: flex;
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.dots{
+    background-image: url(/images/circle.png);
+    background-repeat: no-repeat;
+    height: 12px;
+    width: 12px;
+    padding-right: 12px ;
+}
+.dots.active{
+    background-image: url(/images/circle-active.png);
+    background-repeat: no-repeat;
+    height: 12px;
+    width: 12px;
+}
+
+.card{
+    grid-area: card;
+    margin: 40px 0;
+}
+
+.booking{
+    grid-area: booking;
+    background-color: #E8E8E8;
+    padding: 15px 20px 40px 20px;
+    margin-top: 15px;
+}
+
+input[type=submit]{
+    background-color: #448899;
+    color:white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 25px;
+    font-size: 19px;
+}
+
+input[type='radio']:after {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    top: -2px;
+    left: -1px;
+    position: relative;
+    background-color: white;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+}
+
+input[type='radio']:checked:after {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    top: -2px;
+    left: -1px;
+    position: relative;
+    background-color: #448899;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+}
+
+
+.subTitle{
+    display: flex;
+    color: #666666;
+    margin-top: 15px;
+}
+
+.spotName{
+    font-size: 24px;
+    font-weight: 700;
+    color:#666666
+}
+
+
+.morning::before,.evening::before{
+    content: '';
+    margin-right:5px;
+}
+.morning::after,.evening::after{
+    content: '';
+    margin-left: 10px;
+}
+
+.titleStyle,label{
+    font-size: 16px;
+    font-weight: 700;
+    color: #666666;
+}
+
+
+.pStyle{
+    font-size: 16px;
+    font-weight: 400;
+    color: #666666;
+}
+
+.price{
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+}
+
+.mt-50{
+    margin-top: 50px;
+}
+
+.mt-20{
+    margin-top:20px;
+}
+
+.spotInfo{
+    margin-bottom: 120px;
+}
+
+
+
+.description{
+    margin-top: 15px;
+}
+
+.time,.price,.calendar{
+    margin-top: 24px;
+
+}
+
+hr{
+    border: 0px;
+    border-top: 1px solid #E8E8E8;
+    height: 1px;
+    width: 100%;
+    display: block;
+    color:#E8E8E8;
+    grid-area: hr;
+}
+
+.spotInfo{
+    grid-area: spotInfo;
+}
+
+
+

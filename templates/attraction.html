@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>景點頁面</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/attraction.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+    <header>
+        <div class="container-fluid">
+            <div class="webName">
+                <h1>台北一日遊</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="javascript:;">預定行程</a></li>
+                    <li><a href="javascript:;">登入/註冊</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <!-- section.mainContent>.container>.img>.carousel^.card>.spotName+.spotType+.spotMRT^.booking>.title+.subtitle+.calendar -->
+    <section class="mainContent">
+        <div class="container">
+            <div class="carousel">
+                <div class="slideWrapper" id="slideWrapper">
+                    <div class="slideContent" id="slideContent">
+                        <!--JS插入圖片-->
+                    </div>
+                </div>
+                <div class="next" id="next"><img src="/images/btn_rightArrow.png" alt=""></div>
+                <div class="previous" id="previous"><img src="/images/btn_leftArrow.png" alt=""></div>
+                <div class="dot"></div>
+            </div>
+            <div class="card">
+                <div class="spot">
+                    <div class="spotName" id="name"></div>
+                    <div class="subTitle">
+                        <div class="spotType" id="type"></div>&nbspat&nbsp
+                        <div class="spotMRT" id="MRT"></div>
+                    </div>
+                </div>
+                <div class="booking">
+                    <div class="title titleStyle">訂購導覽行程</div>
+                    <div class="description pStyle">以此景點為中心的一日行程，帶您探索城市角落故事</div>
+                    <label for="calendar">選擇日期：</label>
+                    <input type="date" id="calendar" name="calendar" class="calendar"><br>
+                    <label for="time">選擇時間：</label>
+                    <input type="radio" id="morning" name="morning" class="time" checked="true">
+                    <label for="morning" class="pStyle morning">上半天</label>
+                    <input type="radio" id="evening" name="evening">
+                    <label for="evening" class="pStyle evening">下半天</label><br>
+                    <div class="titleStyle price">導覽費用：<span class="pStyle" id="priceTxt">新台幣 2000 元</span></div>
+                    <input type="submit" value="開始預訂行程">
+                </div>
+            </div>
+            <hr>
+            <!-- .spotInfo+.location>p+.spotLocation^.traffic>p+.spotTraffic -->
+            <div class="spotInfo mt-50">
+                <p class="story pStyle" id="story"></p>
+                <div class="location">
+                    <p class="titleStyle mt-20">景點地點</p>
+                    <p class="pStyle" id="address"></p>
+                </div>
+                <div class="traffic mt-20">
+                    <p class="titleStyle">交通方式</p>
+                    <p class="pStyle" id="transport"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer id="ft">
+        <h6>COPYRIGHT&copy2021 台北一日遊</h6>
+    </footer>
+    <script src="../attraction.js"></script>
+</body>
+
+</html>
