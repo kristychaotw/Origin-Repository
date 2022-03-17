@@ -1,10 +1,15 @@
-// 半日遊、全日遊不同費率
+window.onload = function(){// 半日遊、全日遊不同費率
+
+
+
+
 const btn1=document.getElementById("morning")
 const btn2=document.getElementById("evening")
 const priceTxt=document.getElementById("priceTxt")
 
 btn1.addEventListener("click",btn1Click)
 btn2.addEventListener("click",btn2Click)
+
 
 function btn1Click(){
     if ( checked = false ){
@@ -43,48 +48,49 @@ async function main(){
 }
 
 let imgID = null;
+
+
 function render(){
-nameID=document.createTextNode(idData.data.name)
-document.getElementById("name").appendChild(nameID)
-typeID=document.createTextNode(idData.data.category)
-document.getElementById("type").appendChild(typeID)
-mrtID=document.createTextNode(idData.data.mrt)
-document.getElementById("MRT").appendChild(mrtID)
-storyID=document.createTextNode(idData.data.description)
-document.getElementById("story").appendChild(storyID)
-addressID=document.createTextNode(idData.data.address)
-document.getElementById("address").appendChild(addressID)
-transportID=document.createTextNode(idData.data.transport)
-document.getElementById("transport").appendChild(transportID)
+    nameID=document.createTextNode(idData.data.name)
+    document.getElementById("name").appendChild(nameID)
+    typeID=document.createTextNode(idData.data.category)
+    document.getElementById("type").appendChild(typeID)
+    mrtID=document.createTextNode(idData.data.mrt)
+    document.getElementById("MRT").appendChild(mrtID)
+    storyID=document.createTextNode(idData.data.description)
+    document.getElementById("story").appendChild(storyID)
+    addressID=document.createTextNode(idData.data.address)
+    document.getElementById("address").appendChild(addressID)
+    transportID=document.createTextNode(idData.data.transport)
+    document.getElementById("transport").appendChild(transportID)
 
 
 
-imgID=idData.data.images
-// console.log("imgID:",imgID);
+    imgID=idData.data.images
+    // console.log("imgID:",imgID);
 
-for(x=0;x<imgID.length;x++){
-    const imgDiv=document.createElement("div")
-    num=x+1
-    imgDiv.classList.add("slide","slide"+num+"")
-    const img=document.createElement('img')
-    img.src=null
-    imgDiv.appendChild(img)
-    console.log('imgDiv:',imgDiv);
-    document.querySelector(".slideContent").appendChild(imgDiv)
-    document.querySelector(".slide"+num+">img").src=imgID[x]
-    // 圖上小點
-    dot=document.createElement('div')
-    dot.textContent=""
-    dot.classList.add("dots","dot"+num+"")
-    document.querySelector(".dot").appendChild(dot)
-    
-}
+    for(x=0;x<imgID.length;x++){
+        const imgDiv=document.createElement("div")
+        num=x+1
+        imgDiv.classList.add("slide","slide"+num+"")
+        const img=document.createElement('img')
+        img.src=null
+        imgDiv.appendChild(img)
+        console.log('imgDiv:',imgDiv);
+        document.querySelector(".slideContent").appendChild(imgDiv)
+        document.querySelector(".slide"+num+">img").src=imgID[x]
+        // 圖上小點
+        dot=document.createElement('div')
+        dot.textContent=""
+        dot.classList.add("dots","dot"+num+"")
+        document.querySelector(".dot").appendChild(dot)    
+    }
 }
 
 main()
 
 
-window.onload = function(){
+
 // 輪播
     // 輪播點點
     const firstDot = document.querySelector('.dot').firstChild
