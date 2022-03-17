@@ -1,8 +1,7 @@
-window.onload = function(){// 半日遊、全日遊不同費率
-
-
-
-
+window.onload = function(){
+    
+    
+    // 半日遊、全日遊不同費率
 const btn1=document.getElementById("morning")
 const btn2=document.getElementById("evening")
 const priceTxt=document.getElementById("priceTxt")
@@ -85,6 +84,7 @@ function render(){
         dot.classList.add("dots","dot"+num+"")
         document.querySelector(".dot").appendChild(dot)    
     }
+    carousel()
 }
 
 main()
@@ -92,6 +92,7 @@ main()
 
 
 // 輪播
+function carousel(){
     // 輪播點點
     const firstDot = document.querySelector('.dot').firstChild
     const lastDot = document.querySelector('.dot').lastChild
@@ -185,5 +186,4 @@ main()
     }
 }
 
-
-
+}
