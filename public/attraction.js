@@ -87,8 +87,8 @@ main()
 window.onload = function(){
 // 輪播
     // 輪播點點
-    firstDot = document.querySelector('.dot').firstChild
-    lastDot = document.querySelector('.dot').lastChild
+    const firstDot = document.querySelector('.dot').firstChild
+    const lastDot = document.querySelector('.dot').lastChild
     console.log('firstDot:',firstDot);
     firstDot.classList.add("active")
     dotNum = document.querySelector('.dot').childElementCount
