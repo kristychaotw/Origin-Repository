@@ -4,17 +4,6 @@ console.log("fetching is:",fetching);
 
 
 // 函式1 : 執行fetch，變動的page和kw用函式參數代入
-// function getData(loadPage,KW){
-
-    
-//     let src=`/api/attractions?page=${loadPage}&keyword=${KW}`
-//     // let src="/api/attractions?page="+loadPage+"&keyword="+KW+""
-//     fetch(src)
-//     .then(response => response.json())
-//     .then(data => { loadData(data)    
-//     })
-// }
-
 function getData(loadPage,KW){
 
     if(fetching != true){
@@ -50,7 +39,9 @@ function loadData(data){
             MRT=data.data[i].mrt
             type=data.data[i].category
             img=data.data[i].images[0]
-            console.log(name,MRT,type,img);
+            //新增紀錄id
+            id=data.data[i].id
+            // console.log("會使用的資料:",name,MRT,type,img,id);
 
             // 做盒子
             num=(data.nextPage-1)*12+(i+1)
@@ -66,18 +57,23 @@ function loadData(data){
             div5.classList.add("spotMRT");
             const div6=document.createElement("div")
             div6.classList.add("spotType");
-            document.querySelector(".boxGroup").appendChild(div1)
+            // 多做一個a，設href為/id，append到.boxGroup，把做好的盒子放進去
+            const aDiv=document.createElement('a')
+            aDiv.setAttribute("href",`/attraction/${id}`)
+            document.querySelector(".boxGroup").appendChild(aDiv)
+            aDiv.appendChild(div1)
             document.querySelector(".box"+num+"").appendChild(div2)
             document.querySelector(".box"+num+"").appendChild(div3)
             document.querySelector(".txtBox"+num+"").appendChild(div4)
             document.querySelector(".txtBox"+num+"").appendChild(div5)
             document.querySelector(".txtBox"+num+"").appendChild(div6)
-            console.log("做好的盒子:",div1);
+            // console.log("做好的盒子:",div1);
+        
 
 
             // 資料塞到盒子
             let newBox =".box"+[(data.nextPage-1)*12+(i+1)]
-            console.log('this is newBox',newBox)
+            // console.log('this is newBox',newBox)
             let newName = document.createTextNode (name);
             document.querySelector(""+newBox+">.txtBox>.spotName").appendChild(newName)
             let newMRT = document.createTextNode (MRT);
@@ -91,7 +87,7 @@ function loadData(data){
             
             // 把NextPage資訊傳回去
             let NP =data.nextPage
-            console.log("傳回去的NP:",NP);
+            // console.log("傳回去的NP:",NP);
             getnP(NP)
         }
     }    

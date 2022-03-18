@@ -21,6 +21,10 @@ ul>li>a{
     text-decoration: none;
 }
 
+a{
+    text-decoration: none;
+}
+
 .container-fluid{
     width: 100%;
     max-width: 1200px;
