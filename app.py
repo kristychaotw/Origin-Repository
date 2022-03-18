@@ -27,41 +27,41 @@ def thankyou():
 #=============================================================
 # 雲端資料庫連線
 
-import mysql.connector
-import boto3
-import json
+# import mysql.connector
+# import boto3
+# import json
 
-client=boto3.client('secretsmanager')
-response=client.get_secret_value(SecretId='conSQL')
+# client=boto3.client('secretsmanager')
+# response=client.get_secret_value(SecretId='conSQL')
 
-secretDict=json.loads(response['SecretString'])
-mydb = mysql.connector.connect(
-    host=secretDict['host'],
-    user=secretDict['username'],
-    password=secretDict['password'],
-    database="travelsite"
-)
+# secretDict=json.loads(response['SecretString'])
+# mydb = mysql.connector.connect(
+#     host=secretDict['host'],
+#     user=secretDict['username'],
+#     password=secretDict['password'],
+#     database="travelsite"
+# )
 
-print(mydb)
-mycursor=mydb.cursor()
+# print(mydb)
+# mycursor=mydb.cursor()
 
 #========================================本機版資料庫連線=========================================
 
 # 資料庫連線
-# import mysql.connector
-# import os
+import mysql.connector
+import os
 
-# mydb = mysql.connector.connect(
-#     host="localhost",
-#     # user=os.environ['DB_USER'],
-#     # password=os.environ['DB_PWD'],
-#     user=os.environ.get('DB_USER'),
-#     password=os.environ.get('DB_PWD'),
-#     database="travelsite",
-# 	port="3306"
-# )
-# print(mydb)
-# mycursor=mydb.cursor()
+mydb = mysql.connector.connect(
+    host="localhost",
+    # user=os.environ['DB_USER'],
+    # password=os.environ['DB_PWD'],
+    user=os.environ.get('DB_USER'),
+    password=os.environ.get('DB_PWD'),
+    database="travelsite",
+	port="3306"
+)
+print(mydb)
+mycursor=mydb.cursor()
 
 #=========================================本機版結束=============================
 
@@ -245,5 +245,5 @@ def page_not_found(error):
 	message={"error": True,"message": "500自訂的錯誤訊息"}
 	return jsonify(message), 500
 
-app.run(host='0.0.0.0',port=3000)
-# app.run(port=3000)
+# app.run(host='0.0.0.0',port=3000)
+app.run(port=3000)
