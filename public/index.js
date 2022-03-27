@@ -24,8 +24,8 @@ function getData(loadPage,KW){
 
 // 函式2 : 拿到fetch傳回資料，開始做盒子
 function loadData(data){
-    console.log("nextPate:",data.nextPage)
-    console.log("API回傳:",data);
+    // console.log("nextPate:",data.nextPage)
+    // console.log("API回傳:",data);
     // console.log("長度:",data.data.length);
     if ( data.data[0] == null){
         document.getElementById("boxGroup").innerHTML="無此景點資料"
@@ -102,9 +102,9 @@ let options = {
 }
 let callback = (entries, observer) => {
     entries.forEach(entry => {
-        console.log("IO works");
+        // console.log("IO works");
         newSrc=`/api/attractions?page=${loadPage}&keyword=${userKW}`
-        console.log("loadPage使用:",loadPage,"kw:",userKW);
+        // console.log("loadPage使用:",loadPage,"kw:",userKW);
         if(loadPage != null){
         getData(loadPage,userKW)
         }else{
@@ -121,10 +121,10 @@ let observer = new IntersectionObserver(callback, options)
 // 主程式
 //===============================================================================
 let userKW = ''
-console.log("目前的userKW:",userKW);
+// console.log("目前的userKW:",userKW);
 
 let loadPage = 0
-console.log("目前的要載入的page:",loadPage);
+// console.log("目前的要載入的page:",loadPage);
 
 
 
@@ -135,7 +135,7 @@ getData(loadPage,userKW)
 const srBtn = document.getElementById('srBtn')
 srBtn.addEventListener("click",function(){
     userKW = document.getElementById("userKW").value
-    console.log('userKW:',userKW);
+    // console.log('userKW:',userKW);
     // console.log('srBtn:',srBtn);
     // 呼叫getData，傳入關鍵字
     getData(0,userKW)
@@ -146,7 +146,7 @@ srBtn.addEventListener("click",function(){
 // 判斷: 如果nP不是空值，代表有下一頁，加上捲動觀察器，開始製作div跟載入下頁資料
 function getnP(p){
     loadPage = p
-    console.log("下一頁:", loadPage );
+    // console.log("下一頁:", loadPage );
 
     if (loadPage != null) {
         const target = document.getElementById("ft")
@@ -157,3 +157,140 @@ function getnP(p){
         observer.unobserve(target)
     }
 }
+
+
+//=============================顯示登入表單==================================
+document.getElementById("loginBtnNav").addEventListener("click",function(){
+    document.querySelectorAll(".popUp").forEach(popUp => popUp.classList.add("active"))
+    document.querySelector(".overlay").classList.add("active")
+
+})
+
+document.querySelectorAll(".closeBtn").forEach(closeBtn=>closeBtn.addEventListener("click",function(){
+    document.querySelectorAll(".popUp").forEach(popUp => popUp.classList.remove("active"))
+    document.querySelector(".overlay").classList.remove("active")
+}))
+
+
+document.getElementById("goLogin").addEventListener("click",function(){
+    document.getElementById("Login").style.zIndex='99'
+    document.getElementById("Login").style.opacity='1'
+    document.getElementById("Signup").style.zIndex='1'
+    document.getElementById("Signup").style.opacity='0'
+    msg("")
+})
+
+document.getElementById("goSignup").addEventListener("click",function(){
+    document.getElementById("Signup").style.zIndex='99'
+    document.getElementById("Signup").style.opacity='1'
+    document.getElementById("Login").style.zIndex='1'
+    document.getElementById("Login").style.opacity='0'
+    msg("")
+})
+//============================================================================
+
+//=================================註冊====================================
+
+function register(e){
+    e.preventDefault()
+    let fnameS = document.getElementById("fnameS").value
+    let femailS = document.getElementById("femailS").value
+    let fpasswordS= document.getElementById("fpwdS").value
+    console.log("使用者註冊輸入:",fnameS, femailS, fpasswordS);
+
+    if (fnameS == "" || femailS == "" || fpasswordS == ""){
+        msg("有欄位空白，請重新輸入");
+    }else{
+        fetch(`/api/user`,{
+        method:'POST',
+        headers:{
+            'Accept':'application/json',
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({
+            'name': fnameS,
+            'email':femailS,
+            'password':fpasswordS
+        })
+        }).then(res => {
+            return res.json()
+        }).then(data => {
+            if(data["ok"]){
+                msg("註冊成功")
+            }else{
+                msg(data["message"])}})
+        .catch(error => log(error))
+
+}
+
+}
+
+//=================================登入====================================
+function login(e){
+    e.preventDefault()
+    let femailL = document.getElementById("femailL").value
+    let fpasswordL= document.getElementById("fpwdL").value
+    console.log("使用者登入輸入:",femailL, fpasswordL);
+
+    if (femailL == ""|| fpasswordL == ""){
+        msg("有欄位空白，請重新輸入");
+    }else{
+    fetch(`/api/user`,{
+        method:'PATCH',
+        headers:{
+            'Accept':'application/json',
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({
+            'email':femailL,
+            'password':fpasswordL
+        })
+    }).then(res => {
+            return res.json()
+    }).then(data => {
+        if(data["ok"]){
+            msg("登入成功")
+            location.reload() // 重新載入頁面
+        }else{
+            msg(data["message"])}})
+    .catch(error => console.log(error))
+
+}
+}
+document.getElementById("signupBtn").addEventListener("click",register)
+document.getElementById("loginBtn").addEventListener("click",login)
+
+function msg(p){
+    document.querySelectorAll(".msg").forEach(msg=>msg.innerHTML=p)
+}
+
+
+//=================================登入狀態檢查====================================
+window.onload=function(){
+    fetch(`/api/user`)
+    .then(res => {
+        return res.json()
+    }).then(data => {
+        if(data["data"] == null){
+            document.getElementById("logoutBtnNav").classList.remove("active")
+            document.getElementById("loginBtnNav").classList.add("active")
+        }else{
+            document.getElementById("logoutBtnNav").classList.add("active")
+            document.getElementById("loginBtnNav").classList.remove("active")
+        }
+    })
+    
+}
+
+//=================================登出====================================
+function logout(){
+    fetch(`/api/user`,{
+        method:"Delete"
+    })
+    .then(res => {return res.json()})
+    .then(data => {
+        console.log("logout f: ",data);
+        location.reload()}) // 重新載入頁面
+}
+
+document.getElementById("logoutBtnNav").addEventListener("click", logout)

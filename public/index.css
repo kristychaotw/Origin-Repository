@@ -9,6 +9,7 @@ body{
     font-size:16px;
 }
 
+
 ul{
     list-style: none;
 }
@@ -30,6 +31,8 @@ a{
     max-width: 1200px;
     margin:auto;
 }
+
+
 
 /* 待確認//stage1第二周作業是90% */
 .container{
@@ -113,6 +116,7 @@ nav>ul>li>a{
 }
 
 .searchBar>.input[type="text"]{
+    margin-top: 0px;
     padding:15px;
     font-weight: 700;
     line-height: 16px;

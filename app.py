@@ -2,9 +2,15 @@
 # from asyncio.windows_events import NULL
 # from types import NoneType
 # from typing import final
+import os
+
 from flask import *
-from flask import jsonify
+from flask import jsonify,request,session
+
 app=Flask(__name__, static_folder="public",static_url_path="/")
+# app.secret_key=str(os.environ.get('PY_KEY'))
+app.secret_key=str(os.environ.get('SECRET_KEY'))
+
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 app.config['JSON_SORT_KEYS'] = False
@@ -24,48 +30,46 @@ def thankyou():
 	return render_template("thankyou.html")
 
 
-#=============================================================
-# 雲端資料庫連線
+#=================================== 雲端資料庫連線==========================
 
-import mysql.connector
-import boto3
-import json
 
-client=boto3.client('secretsmanager')
-response=client.get_secret_value(SecretId='conSQL')
-
-secretDict=json.loads(response['SecretString'])
-mydb = mysql.connector.connect(
-    host=secretDict['host'],
-    user=secretDict['username'],
-    password=secretDict['password'],
-    database="travelsite"
-)
-
-print(mydb)
-mycursor=mydb.cursor()
-
-#========================================本機版資料庫連線=========================================
-
-# 資料庫連線
 # import mysql.connector
-# import os
+# import boto3
+# import json
 
+# client=boto3.client('secretsmanager')
+# response=client.get_secret_value(SecretId='conSQL')
+
+# secretDict=json.loads(response['SecretString'])
 # mydb = mysql.connector.connect(
-#     host="localhost",
-#     # user=os.environ['DB_USER'],
-#     # password=os.environ['DB_PWD'],
-#     user=os.environ.get('DB_USER'),
-#     password=os.environ.get('DB_PWD'),
-#     database="travelsite",
-# 	port="3306"
+#     host=secretDict['host'],
+#     user=secretDict['username'],
+#     password=secretDict['password'],
+#     database="travelsite"
 # )
+
 # print(mydb)
 # mycursor=mydb.cursor()
 
-#=========================================本機版結束=============================
+#========================================本機資料庫連線=========================================
 
-# APIs
+import mysql.connector
+import os
+
+mydb = mysql.connector.connect(
+    host="localhost",
+    # user=os.environ['DB_USER'],
+    # password=os.environ['DB_PWD'],
+    user=os.environ.get('DB_USER'),
+    password=os.environ.get('DB_PWD'),
+    database="travelsite",
+	port="3306"
+)
+print(mydb)
+mycursor=mydb.cursor()
+
+#=========================================本機版結束=============================
+# Attraction APIs
 @app.route("/api/attractions")
 def attractionsAPI():
 	page=request.args.get("page",None)
@@ -128,9 +132,9 @@ def attractionsAPI():
 		# print(len(kwDB))
 		mycursor.execute("SELECT COUNT(*) FROM spotinfo10 WHERE name LIKE '%"+kw+"%'")
 		numsofRows=mycursor.fetchone()
-		print("提取資料筆數:",numsofRows)
+		# print("提取資料筆數:",numsofRows)
 		KWlastPage=numsofRows[0]//12
-		print("無KW最後一頁:",KWlastPage)
+		# print("無KW最後一頁:",KWlastPage)
 
 		kwspotData=[]
 		for n in range(0,len(kwDB)):
@@ -156,7 +160,7 @@ def attractionsAPI():
 # 判斷 1-1 : kw有輸入值
 	if kw != None:
 		dataPnKW=pick12RowKW(p)
-		print("有輸入關鍵字。kw是:",kw,"p是:",p,"最後一頁:",dataPnKW[2])
+		# print("有輸入關鍵字。kw是:",kw,"p是:",p,"最後一頁:",dataPnKW[2])
 		# 判斷 1-2 : 頁數輸入值為整數 
 		if p or p == 0:
 			# 判斷 1-3 : p < 最後一頁
@@ -171,7 +175,7 @@ def attractionsAPI():
 
 	else:
 		dataP=pick12Row(p)
-		print("沒有輸入關鍵字。kw是:",kw,"p是:",p,"最後一頁:",dataP[2])
+		# print("沒有輸入關鍵字。kw是:",kw,"p是:",p,"最後一頁:",dataP[2])
 		# 判斷 2-1 : 頁數輸入值為整數
 		if p or p == 0:
 			# 判斷 2-2 : p < 最後一頁
@@ -236,14 +240,127 @@ def attractionAPI(attractionID):
 
 @app.errorhandler(404)
 def page_not_found(error):
-	message={"error": True,"message": "400自訂的錯誤訊息"}
+	msg=request.args.get("message","400自訂的錯誤訊息")
+	# message={"error": True,"message": "400自訂的錯誤訊息"}
+	message={"error": True,"message": msg}
 	return jsonify(message), 400
 
 
 @app.errorhandler(500)
 def page_not_found(error):
-	message={"error": True,"message": "500自訂的錯誤訊息"}
+	msg=request.args.get("message","500自訂的錯誤訊息")
+	message={"error": True,"message":msg}
 	return jsonify(message), 500
+
+
+
+
+import jwt
+
+# 使用者API
+# 新增member表單
+# mycursor.execute("CREATE TABLE member (id bigint PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255) NOT NULL,email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
+# mydb.commit()
+
+# 註冊 post  
+@app.route("/api/user", methods=['POST'])	
+def createUser():
+	data=request.get_json()
+	name=data['name']
+	email=data['email']
+	password=data['password']
+	print("使用者註冊輸入:",name,email,password)
+		
+	mycursor.execute("SELECT name FROM member WHERE name="+"'"+name+"'")
+	checkUser=mycursor.fetchall()
+	print("checkuser:",checkUser)
+	
+	if len(checkUser) != 0: # db裡面有資料
+		for i in checkUser: 
+			if name == i[0]: # 有資料且有符合
+				print("資料庫裡有:"+name+"")
+				return jsonify({"error": True,"message": "帳號已經被註冊"})
+			else: # 有資料但不符合 user
+				mycursor.execute("INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password))
+				mydb.commit()
+				print("已將"+name+"資料存入資料庫")
+				return  jsonify({"ok": True})
+				# return redirect ("/")
+	else: # db裡面沒有資料
+		mycursor.execute("INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password))
+		mydb.commit()
+		print("已將"+name+"資料存入資料庫")
+		return jsonify({"ok": True})
+
+
+# 登入 patch   
+@app.route("/api/user", methods=['PATCH'])
+def loginUser():
+	data=request.get_json()
+	email=data["email"]
+	password=data["password"]
+
+	target="SELECT email, password,name FROM member WHERE email="+"'"+email+"'"
+	mycursor.execute(target)
+	checklogin=mycursor.fetchall()
+
+	if len(checklogin) != 0: # db裡面有資料
+		for p in checklogin:
+			if p[0] == email and p[1] ==password:
+				session["user"]=p[2]
+				print("帳密符合")
+				result={"ok": True}
+				break
+
+			else:
+				print("帳密不符合")
+				result={"error": True, "message": "登入失敗，帳號或密碼輸入錯誤"}
+				continue
+
+		return jsonify(result)
+
+	else: # db裡面沒資料
+		result={"error": True, "message": "登入失敗，帳號或密碼錯誤或其他原因"}
+	return jsonify(result)
+
+# 取得登入狀態 get
+@app.route("/api/user", methods=['GET'])
+def getUserStatus():
+
+	print("session檢查:",session)
+
+	if session == {}:
+		print("session中無使用者")
+		return jsonify({"data": None})
+	else:
+		nameSession=session["user"]
+		print("session中有使用者，使用者名稱:",nameSession)
+		target="SELECT id, email,name FROM member WHERE name="+"'"+nameSession+"'"
+		mycursor.execute(target)
+		Data=mycursor.fetchone()
+
+		idDB = Data[0]
+		emailDB= Data[1]
+		nameDB =Data[2]
+		return jsonify({
+					"data":{"id": idDB,
+						"name": nameDB ,
+							"email": emailDB
+								}
+})
+
+
+# 登出 delete 
+@app.route("/api/user", methods=['DELETE'])
+def logoutUser():
+	session.pop("user",None)
+	return jsonify({"ok": True})
+
+
+
+
+
+
 
 app.run(host='0.0.0.0',port=3000)
 # app.run(port=3000)

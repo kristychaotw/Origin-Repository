@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/index.css">
+    <link rel="stylesheet" type="text/css" href="/member.css">
+
     <link rel="icon" href="data:,">
 </head>
 
@@ -23,11 +25,43 @@
             <nav>
                 <ul>
                     <li><a href="javascript:;">預定行程</a></li>
-                    <li><a href="javascript:;">登入/註冊</a></li>
+                    <li id="loginBtnNav"><a href="javascript:;">登入/註冊</a></li>
+                    <li id="logoutBtnNav"><a href="javascript:;">登出系統</a></li>
                 </ul>
             </nav>
         </div>
     </header>
+    <!--會員系統-->
+    <div class="overlay">    </div>
+    <!--登入-->
+    <section class="popLogin popUp" id="Login">
+        <div class="whiteBlock">
+            <div class="closeBtn"></div>
+            <div class="title">登入會員帳號</div>
+            <form class="loginForm" method="patch" action="javascript:void(0);">
+                <input type="email" id="femailL" name="femail" placeholder="輸入電子郵件" required /><br>
+                <input type="password" id="fpwdL" name="fpwd" placeholder="輸入密碼" required /><br>
+                <input type="submit" value="登入帳戶" id="loginBtn"/>
+            </form>
+            <p id="goSignup"><a href="javascript:;">還沒有帳戶？點此註冊</a></p>
+            <div class="msg"></div>
+        </div>
+    </section>
+      <!--註冊-->
+    <section class="popSignup popUp" id="Signup">
+        <div class="whiteBlock">
+            <div class="closeBtn"></div>
+            <div class="title">註冊會員帳號</div>
+            <form class="signupForm" method="post" action="javascript:void(0);">
+                <input type="text" id="fnameS" name="fname" placeholder="輸入姓名" required /><br>
+                <input type="email" id="femailS" name="femail" placeholder="輸入電子郵件" required /><br>
+                <input type="password" id="fpwdS" name="fpwd" placeholder="輸入密碼" required /><br>
+                <input type="submit" value="註冊新帳戶" id="signupBtn" />
+            </form>
+            <p id="goLogin"><a href="javascript:;">已有帳戶了？點此登入</a></p>
+            <div class="msg"></div>
+        </div>
+    </section>
     <div class="banner">
         <div class="container">
             <div class="slogan">
