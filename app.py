@@ -50,6 +50,7 @@ mydb = mysql.connector.connect(
 
 print(mydb)
 mycursor=mydb.cursor()
+mycursor.execute('SET GLOBAL max_allowed_packet=67108864')
 
 #========================================本機資料庫連線=========================================
 
@@ -67,6 +68,7 @@ mycursor=mydb.cursor()
 # )
 # print(mydb)
 # mycursor=mydb.cursor()
+# mycursor.execute('SET GLOBAL max_allowed_packet=67108864')
 
 #=========================================本機版結束=============================
 # Attraction APIs
