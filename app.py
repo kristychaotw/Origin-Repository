@@ -50,7 +50,7 @@ dbconfig={
 	"password":secretDict['password'],
 	"database":"travelsite",
 }
-cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20, **dbconfig)
+cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20,pool_reset_session=True, **dbconfig)
 mydb=cnxpool.get_connection()
 print(mydb)
 mycursor=mydb.cursor()
