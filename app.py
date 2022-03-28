@@ -35,6 +35,8 @@ def thankyou():
 import mysql.connector
 import boto3
 import json
+from mysql.connector import pooling
+from mysql.connector import connect
 
 client=boto3.client('secretsmanager')
 response=client.get_secret_value(SecretId='conSQL')
@@ -66,24 +68,24 @@ mycursor=mydb.cursor()
 
 #========================================本機資料庫連線=========================================
 
-import mysql.connector
-import os
-from mysql.connector import pooling
-from mysql.connector import connect
+# import mysql.connector
+# import os
+# from mysql.connector import pooling
+# from mysql.connector import connect
 
-# 連線池
+# # 連線池
 
-dbconfig={
-	"host":"localhost",
-	"user":os.environ.get('DB_USER'),
-	"password":os.environ.get('DB_PWD'),
-	"database":"travelsite",
-	"port":3306
-}
-cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20, **dbconfig)
-mydb=cnxpool.get_connection()
-print(mydb)
-mycursor=mydb.cursor()
+# dbconfig={
+# 	"host":"localhost",
+# 	"user":os.environ.get('DB_USER'),
+# 	"password":os.environ.get('DB_PWD'),
+# 	"database":"travelsite",
+# 	"port":3306
+# }
+# cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20, **dbconfig)
+# mydb=cnxpool.get_connection()
+# print(mydb)
+# mycursor=mydb.cursor()
 
 # 原本的連線
 # mydb = mysql.connector.connect(
@@ -437,5 +439,5 @@ def logoutUser():
 
 
 
-# app.run(host='0.0.0.0',port=3000)
-app.run(port=3000)
+app.run(host='0.0.0.0',port=3000)
+# app.run(port=3000)
