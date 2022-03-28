@@ -198,8 +198,23 @@ function register(e){
     let fpasswordS= document.getElementById("fpwdS").value
     console.log("使用者註冊輸入:",fnameS, femailS, fpasswordS);
 
+    //Email Regular expression Testing
+    emailRule = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+    
+    const validateEmail = (email) => {
+        if(email.search(emailRule)!= -1){
+             return true 
+          }else{
+              return false
+          }
+      };
+
+      console.log("test:",validateEmail(femailS));
+
     if (fnameS == "" || femailS == "" || fpasswordS == ""){
         msg("有欄位空白，請重新輸入");
+    }else if( validateEmail(femailS) == false){
+        msg("信箱格式錯誤，請重新輸入");
     }else{
         fetch(`/api/user`,{
         method:'POST',
