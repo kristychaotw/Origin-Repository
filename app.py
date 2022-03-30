@@ -8,7 +8,6 @@ from flask import *
 from flask import jsonify,request,session
 
 app=Flask(__name__, static_folder="public",static_url_path="/")
-# app.secret_key=str(os.environ.get('PY_KEY'))
 app.secret_key=str(os.environ.get('SECRET_KEY'))
 
 app.config["JSON_AS_ASCII"]=False
@@ -33,42 +32,103 @@ def thankyou():
 #=================================== 雲端資料庫連線==========================
 
 
-# import mysql.connector
-# import boto3
-# import json
+import mysql.connector
+import boto3
+import json
+from mysql.connector import pooling,connect,Error
 
-# client=boto3.client('secretsmanager')
-# response=client.get_secret_value(SecretId='conSQL')
+client=boto3.client('secretsmanager')
+response=client.get_secret_value(SecretId='conSQL')
+secretDict=json.loads(response['SecretString'])
 
-# secretDict=json.loads(response['SecretString'])
+
+# 連線池
+dbconfig={
+	"host":secretDict['host'],
+	"user":secretDict['username'],
+	"password":secretDict['password'],
+	"database":"travelsite",
+}
+cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20,pool_reset_session=True, **dbconfig)
+# mydb=cnxpool.get_connection()
+# print(mydb)
+# mycursor=mydb.cursor()
+# 原本的連線
 # mydb = mysql.connector.connect(
 #     host=secretDict['host'],
 #     user=secretDict['username'],
 #     password=secretDict['password'],
 #     database="travelsite"
 # )
-
 # print(mydb)
 # mycursor=mydb.cursor()
+# mycursor.execute('SET GLOBAL max_allowed_packet=67108864')
 
 #========================================本機資料庫連線=========================================
 
-import mysql.connector
-import os
+# import mysql.connector
+# import os
+# from mysql.connector import pooling,connect,Error
 
-mydb = mysql.connector.connect(
-    host="localhost",
-    # user=os.environ['DB_USER'],
-    # password=os.environ['DB_PWD'],
-    user=os.environ.get('DB_USER'),
-    password=os.environ.get('DB_PWD'),
-    database="travelsite",
-	port="3306"
-)
-print(mydb)
-mycursor=mydb.cursor()
+# # 連線池
+
+# dbconfig={
+# 	"host":"localhost",
+# 	"user":os.environ.get('DB_USER'),
+# 	"password":os.environ.get('DB_PWD'),
+# 	"database":"travelsite",
+# 	"port":3306
+# }
+# cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20, **dbconfig)
+
+# mydb=cnxpool.get_connection()
+# print(mydb)
+# mycursor=mydb.cursor()
+# 原本的連線
+# mydb = mysql.connector.connect(
+#     host="localhost",
+#     user=os.environ.get('DB_USER'),
+#     password=os.environ.get('DB_PWD'),
+#     database="travelsite",
+# 	port="3306"
+# )
+# print(mydb)
+# mycursor=mydb.cursor()
+# mycursor.execute('SET GLOBAL max_allowed_packet=67108864')
 
 #=========================================本機版結束=============================
+
+def dbConnect(sqlquery):
+	try:
+		mydb=cnxpool.get_connection()
+		mycursor=mydb.cursor()
+		mycursor.execute(sqlquery)
+		dbResult=mycursor.fetchall()
+		# mydb.commit()
+		return dbResult
+	except Error as e:
+		print("資料庫連線失敗:", e)
+	finally:
+		if (mydb.is_connected()):
+			mycursor.close()
+			mydb.close()
+
+
+def dbConnect_insert(name,email,password):
+	try:
+		mydb=cnxpool.get_connection()
+		mycursor=mydb.cursor()
+		mycursor.execute("INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password))
+		mydb.commit()
+		return "commit done"
+	except Error as e:
+		print("資料庫連線失敗:", e)
+	finally:
+		if (mydb.is_connected()):
+			mycursor.close()
+			mydb.close()
+
+
 # Attraction APIs
 @app.route("/api/attractions")
 def attractionsAPI():
@@ -80,15 +140,13 @@ def attractionsAPI():
 	col="id,name,category,description,address,transport,mrt,latitude,longitude,images"
 	
 	def pick12Row(p):
-		mycursor.execute("SELECT COUNT(*) FROM spotinfo10")
-		numsofRows=mycursor.fetchone()
-		# print("提取資料筆數:",numsofRows)
-		nokwLastPage=numsofRows[0]//12
-		# print("無KW最後一頁:",nokwLastPage)
+		numsofRows=dbConnect("SELECT COUNT(*) FROM spotinfo10")
+		print(numsofRows)
+		nokwLastPage=numsofRows[0][0]//12
+		# print("無KW最後一頁:",nokwLastPage)	
 
 		nokwSelect="SELECT "+col+" FROM spotinfo10 ORDER BY id LIMIT 12 offset"+" "+str(p*12)
-		mycursor.execute(nokwSelect)
-		nokwDB=mycursor.fetchall()
+		nokwDB=dbConnect(nokwSelect)
 		# print("撈到資料:",nokwDB,"資料型態:",type(nokwDB),"長度:",len(nokwDB))
 		spotData=[]
 		for n in range(0,len(nokwDB)):
@@ -121,20 +179,21 @@ def attractionsAPI():
 		result = [p+1,spotData,nokwLastPage]
 		# print("裡面的result:",result)
 		return (result)
+		
 
 	
 	def pick12RowKW(p):
+		numsofRows=dbConnect("SELECT COUNT(*) FROM spotinfo10 WHERE name LIKE '%"+kw+"%'")
+		# print("回傳:",numsofRows[0])
+		KWlastPage=numsofRows[0][0]//12
+		# print("無KW最後一頁:",KWlastPage)
+		
+
 		kwSelect="SELECT "+col+" FROM spotinfo10 WHERE name LIKE '%"+kw+"%'" + " LIMIT 12 offset"+" "+str(p*12)
 		# print(kwSelect)
-		mycursor.execute(kwSelect)
-		kwDB=mycursor.fetchall()
+		kwDB=dbConnect(kwSelect)
 		# print("關鍵字:",kwDB)
 		# print(len(kwDB))
-		mycursor.execute("SELECT COUNT(*) FROM spotinfo10 WHERE name LIKE '%"+kw+"%'")
-		numsofRows=mycursor.fetchone()
-		# print("提取資料筆數:",numsofRows)
-		KWlastPage=numsofRows[0]//12
-		# print("無KW最後一頁:",KWlastPage)
 
 		kwspotData=[]
 		for n in range(0,len(kwDB)):
@@ -154,6 +213,7 @@ def attractionsAPI():
 		# print("kwspotData的長度:",len(kwspotData))
 		dataPnKW = [p+1,kwspotData,KWlastPage]
 		return (dataPnKW)
+		
 	
 
 
@@ -192,21 +252,24 @@ def attractionsAPI():
 
 
 
+
+
 @app.route("/api/attraction/<attractionID>")
 def attractionAPI(attractionID):
 	col="id,name,category,description,address,transport,mrt,latitude,longitude,images"
 	# print("id為:",attractionID,"id換數字",(int(attractionID)))
-	mycursor.execute("SELECT COUNT(*) FROM spotinfo10")
-	numsofRows=mycursor.fetchone()
+	numsofRows=dbConnect("SELECT COUNT(*) FROM spotinfo10")
+
+
 	# print("資料筆數:",numsofRows[0],type(numsofRows[0]))
 	
 	# 判斷 1 : 輸入值為整數
 	if int(attractionID):
 		# 判斷 2 : 輸入值為有效整數 (非0、非超過資料筆數)
-		if int(attractionID) != 0 and int(attractionID) <= numsofRows[0]:
+		if int(attractionID) != 0 and int(attractionID) <= numsofRows[0][0]:
 			idSelect="SELECT "+col+" FROM spotinfo10 WHERE id = "+attractionID+""
-			mycursor.execute(idSelect)
-			dataDBId=mycursor.fetchall()
+			dataDBId=dbConnect(idSelect)
+		
 			# print(idSelect)
 			# print(dataDBId)
 			for x in dataDBId:
@@ -235,7 +298,7 @@ def attractionAPI(attractionID):
     # 判斷 1 : 輸入值不是整數 ( 空值、字串... )  
 	else: 
 		return "error: 輸入值不是整數，無效"
-
+	
 
 
 @app.errorhandler(404)
@@ -257,7 +320,7 @@ def page_not_found(error):
 
 import jwt
 
-# 使用者API
+# 使用者登入系統API
 # 新增member表單
 # mycursor.execute("CREATE TABLE member (id bigint PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255) NOT NULL,email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
 # mydb.commit()
@@ -270,9 +333,8 @@ def createUser():
 	email=data['email']
 	password=data['password']
 	print("使用者註冊輸入:",name,email,password)
-		
-	mycursor.execute("SELECT name FROM member WHERE name="+"'"+name+"'")
-	checkUser=mycursor.fetchall()
+
+	checkUser=dbConnect("SELECT name FROM member WHERE name="+"'"+name+"'")
 	print("checkuser:",checkUser)
 	
 	if len(checkUser) != 0: # db裡面有資料
@@ -281,16 +343,17 @@ def createUser():
 				print("資料庫裡有:"+name+"")
 				return jsonify({"error": True,"message": "帳號已經被註冊"})
 			else: # 有資料但不符合 user
-				mycursor.execute("INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password))
-				mydb.commit()
+				# target="INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password)
+				dbConnect_insert(name,email,password)
 				print("已將"+name+"資料存入資料庫")
 				return  jsonify({"ok": True})
 				# return redirect ("/")
 	else: # db裡面沒有資料
-		mycursor.execute("INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password))
-		mydb.commit()
+		# target="INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password)
+		dbConnect_insert(name,email,password)
 		print("已將"+name+"資料存入資料庫")
 		return jsonify({"ok": True})
+
 
 
 # 登入 patch   
@@ -301,8 +364,7 @@ def loginUser():
 	password=data["password"]
 
 	target="SELECT email, password,name FROM member WHERE email="+"'"+email+"'"
-	mycursor.execute(target)
-	checklogin=mycursor.fetchall()
+	checklogin=dbConnect(target)
 
 	if len(checklogin) != 0: # db裡面有資料
 		for p in checklogin:
@@ -323,6 +385,8 @@ def loginUser():
 		result={"error": True, "message": "登入失敗，帳號或密碼錯誤或其他原因"}
 	return jsonify(result)
 
+
+
 # 取得登入狀態 get
 @app.route("/api/user", methods=['GET'])
 def getUserStatus():
@@ -336,18 +400,18 @@ def getUserStatus():
 		nameSession=session["user"]
 		print("session中有使用者，使用者名稱:",nameSession)
 		target="SELECT id, email,name FROM member WHERE name="+"'"+nameSession+"'"
-		mycursor.execute(target)
-		Data=mycursor.fetchone()
+		Data=dbConnect(target)
+		print("Data是:",Data)
 
-		idDB = Data[0]
-		emailDB= Data[1]
-		nameDB =Data[2]
+		idDB = Data[0][0]
+		emailDB= Data[0][1]
+		nameDB =Data[0][2]
 		return jsonify({
 					"data":{"id": idDB,
 						"name": nameDB ,
 							"email": emailDB
 								}
-})
+		})
 
 
 # 登出 delete 
@@ -355,10 +419,6 @@ def getUserStatus():
 def logoutUser():
 	session.pop("user",None)
 	return jsonify({"ok": True})
-
-
-
-
 
 
 
