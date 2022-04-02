@@ -9,6 +9,10 @@ function popLogin(){
 }
 
 
+function onBookingPage(){
+    window.location.href = '/booking'
+}
+
 // 導覽列預定行程按鈕
 document.getElementById("bookingBtnNav").addEventListener("click",function(e){
     e.preventDefault()

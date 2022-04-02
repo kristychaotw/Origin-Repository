@@ -187,7 +187,7 @@
     }
 
 
-//===============景點頁預定行程按紐=========================================
+//=========================景點頁預定行程按紐=========================================
 
 function popLogin(){
     document.querySelectorAll(".popUp").forEach(popUp => popUp.classList.add("active"))
@@ -199,9 +199,6 @@ function popLogin(){
     msg("")
 }
 
-function onBookingPage(){
-    window.location.href = '/booking'
-}
 
 function createBooking(){
     const idNum=window.location.pathname.split('/')[2]
@@ -243,6 +240,7 @@ function createBooking(){
         .catch(error => log(error))
 }
 
+// 景點頁預定行程按紐
 document.getElementById("goReservation").addEventListener("click",function(e){
     e.preventDefault()
     
