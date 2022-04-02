@@ -5,6 +5,8 @@ window.onload=function loadBooking(){
             return res.json()
         }else if(res.status==403){
             window.location.href='/'
+        }else{
+            return res.json()
         }
     })
     .then(result => {
