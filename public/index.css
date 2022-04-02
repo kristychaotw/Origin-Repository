@@ -9,6 +9,10 @@ body{
     font-size:16px;
 }
 
+.webName>a{
+    text-decoration: none;
+    color: #448899;
+}
 
 ul{
     list-style: none;

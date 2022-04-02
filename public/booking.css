@@ -1,0 +1,162 @@
+body{
+    color: #666666;
+}
+
+.container{
+    width: 80%;
+}
+
+.webName>a{
+    text-decoration: none;
+    color: #448899;
+}
+header{
+    border-bottom: 1px solid #e8e8e8;
+}
+
+span{
+    font-weight: 400;
+}
+
+.userName{
+    font-weight: 700;
+}
+
+.spot{
+    font-weight: 700;
+    color: #448899;
+    line-height: 13.3px;
+    font-size: 16px;
+}
+
+.price ::after,.total ::after{
+    content: ' 元';
+}
+.price ::before,.total ::before{
+    content: '新台幣 ';
+}
+
+.destination{
+    margin-top: 35px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.deleteIcon{
+    display: grid;
+    justify-content: flex-end;
+}
+
+.mt-20{
+    margin-top: 20px;
+}
+
+.mt-30{
+    margin-top: 30px;
+}
+
+.lh-13{
+    line-height: 13.3px;
+}
+
+.dText{
+    margin-top: 5px;
+    font-weight: 700;
+    padding-left: 22px;
+
+}
+
+.dText>.title{
+    color:#448899;
+}
+
+
+
+
+
+.bookingForm>input[type=text], .bookingForm>input[type=password], .bookingForm>input[type=email],.bookingForm>input[type=tel] {
+    padding: 10px;
+    border: 1px solid #e8e8e8;
+    border-radius: 5px;
+    margin-top: 15px;
+    width: 200px;
+    height: 38px;
+    box-sizing: border-box;
+    font-size: 16px;
+    line-height: 13px;
+}
+
+.bookingForm>p{
+    margin-top: 20px;
+}
+
+.h4,.bookingForm>h4{
+    font-size: 19px;
+    line-height: 16px;
+    font-weight: 700;
+    color: #666666;
+    margin-top: 44px;
+    margin-bottom: 4px;
+}
+
+hr{
+    border: 0px;
+    border-top: 1px solid #E8E8E8;
+    height: 1px;
+    width: 100%;
+    display: block;
+    color:#E8E8E8;
+    grid-area: hr;
+    margin-top: 40px;
+}
+
+.total{
+    display: flex;
+    justify-content: end;
+}
+
+.bookingForm>input[type=submit]{
+    float: right;
+    background-color: #448899;
+    color:white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 25px;
+    font-size: 19px;
+    width: auto;
+    height: auto;
+    margin-bottom: 62px;
+}
+footer{
+    clear: both;
+}
+
+
+.mainImg{
+    width: 100%;
+    object-fit: cover;
+    aspect-ratio: 16/9;
+}
+
+/* 景點資訊RWD */
+@media screen and (max-width:600px) {
+    .destination{
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+    .dText>.title{
+        margin-top: 7px;
+    }
+   .container{
+       width: 90%;
+   }
+
+   .mainImg{
+       width: 100%;
+       padding: 28px 0;
+       object-fit: cover;
+       aspect-ratio: 16/9;
+   }
+}
+

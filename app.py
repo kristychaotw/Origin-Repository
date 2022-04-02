@@ -50,9 +50,7 @@ dbconfig={
 	"database":"travelsite",
 }
 cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20,pool_reset_session=True, **dbconfig)
-# mydb=cnxpool.get_connection()
-# print(mydb)
-# mycursor=mydb.cursor()
+
 # 原本的連線
 # mydb = mysql.connector.connect(
 #     host=secretDict['host'],
@@ -81,20 +79,6 @@ cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20,pool_
 # }
 # cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20, **dbconfig)
 
-# mydb=cnxpool.get_connection()
-# print(mydb)
-# mycursor=mydb.cursor()
-# 原本的連線
-# mydb = mysql.connector.connect(
-#     host="localhost",
-#     user=os.environ.get('DB_USER'),
-#     password=os.environ.get('DB_PWD'),
-#     database="travelsite",
-# 	port="3306"
-# )
-# print(mydb)
-# mycursor=mydb.cursor()
-# mycursor.execute('SET GLOBAL max_allowed_packet=67108864')
 
 #=========================================本機版結束=============================
 
@@ -114,6 +98,9 @@ def dbConnect(sqlquery):
 			mydb.close()
 
 
+
+
+
 def dbConnect_insert(name,email,password):
 	try:
 		mydb=cnxpool.get_connection()
@@ -128,8 +115,9 @@ def dbConnect_insert(name,email,password):
 			mycursor.close()
 			mydb.close()
 
+#======================================= Attraction APIs ===============================================
 
-# Attraction APIs
+# Attractions API
 @app.route("/api/attractions")
 def attractionsAPI():
 	page=request.args.get("page",None)
@@ -253,7 +241,7 @@ def attractionsAPI():
 
 
 
-
+# attractionID API
 @app.route("/api/attraction/<attractionID>")
 def attractionAPI(attractionID):
 	col="id,name,category,description,address,transport,mrt,latitude,longitude,images"
@@ -316,15 +304,16 @@ def page_not_found(error):
 	return jsonify(message), 500
 
 
-
+# ====================================== JWT (待做) ========================================================
 
 import jwt
 
-# 使用者登入系統API
 # 新增member表單
 # mycursor.execute("CREATE TABLE member (id bigint PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255) NOT NULL,email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
 # mydb.commit()
 
+
+#======================================= Member System APIs ===============================================
 # 註冊 post  
 @app.route("/api/user", methods=['POST'])	
 def createUser():
@@ -420,6 +409,117 @@ def logoutUser():
 	session.pop("user",None)
 	return jsonify({"ok": True})
 
+
+
+#============================================= Booking Sql ===========================================
+def dbInsert_table(sql,value):
+	try:
+		mydb=cnxpool.get_connection()
+		mycursor=mydb.cursor()
+		mycursor.execute(sql,value)
+		mydb.commit()
+		return "commit done"
+	# mycursor.execute("INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password))
+	except Error as e:
+		print("資料庫連線失敗:", e)
+	finally:
+		if (mydb.is_connected()):
+			mycursor.close()
+			mydb.close()
+
+
+def dbDelete(sql):
+	try:
+		mydb=cnxpool.get_connection()
+		mycursor=mydb.cursor()
+		mycursor.execute(sql)
+		mydb.commit()
+		return "commit done"
+	# mycursor.execute("INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password))
+	except Error as e:
+		print("資料庫連線失敗:", e)
+	finally:
+		if (mydb.is_connected()):
+			mycursor.close()
+			mydb.close()
+#============================================= Booking APIs ===========================================
+
+# 新增booking的table
+# mydb=cnxpool.get_connection()
+# mycursor=mydb.cursor()
+# mycursor.execute("CREATE TABLE booking (id BIGINT PRIMARY KEY AUTO_INCREMENT, attractionID BIGINT NOT NULL, date DATE NOT NULL, time TINYTEXT NOT NULL, price SMALLINT NOT NULL,timenow DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
+# mydb.commit()
+# mydb.close()
+
+
+# Post 建立新的預定行程
+@app.route("/api/booking",methods=["POST"])
+def createBooking():
+	if session == {}:
+		print("session中無使用者")
+		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
+	else:
+		cleanTable=dbDelete("DELETE FROM booking")
+		print("cleanTable:",cleanTable)
+		data=request.get_json()
+		attractionId=data["attractionId"]
+		dateUser=str(data["date"])
+		timeUser=data["time"]
+		priceUser=data["price"]
+		sql="INSERT INTO booking (attractionID,date,time,price) VALUES (%s,%s,%s,%s)"
+		value=(attractionId,dateUser,timeUser,priceUser)	
+		result=dbInsert_table(sql,value)
+		print(result)
+		if result=="commit done":
+			return jsonify({"ok": True})
+		else:
+			return jsonify({"error": True,"message": "建立失敗，輸入不正確或其他原因"}),400
+
+
+# Get 取得尚未確認下單的預定行程
+@app.route("/api/booking",methods=['GET'])
+def getBooking():
+	if session == {}:
+		print("session中無使用者")
+		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
+	else:
+		sql2="SELECT attractionID,date,time,price FROM booking"
+		bookingDB=dbConnect(sql2)
+		if bookingDB != []:
+			booking=bookingDB[0]
+			print("booking[0]:",booking[0])
+			attractionID=str(booking[0])
+			sql="SELECT id,name,address,images FROM spotInfo10 WHERE id="+attractionID+""
+			spot=dbConnect(sql)[0]
+			print("spot:",spot)
+			oneImg=spot[3].split(",")[1]
+			print("oneImg:",oneImg)
+			return jsonify({ "data": 
+			{"attraction": {
+				"id": spot[0],
+				"name":spot[1],
+				"address": spot[2],
+				"image": oneImg
+			},
+			"date": booking[1],
+			"time": booking[2],
+			"price":booking[3]
+			}}),200
+		else:
+			return jsonify({"data":None}),200
+
+
+#Delete 刪除目前的預定行程
+@app.route("/api/booking",methods=["DELETE"])
+def deleteBooking():
+	if session == {}:
+		print("session中無使用者")
+		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
+	else:
+		sql="DELETE FROM booking"
+		dbDelete(sql)
+		return jsonify({"ok": true})
+	
 
 
 app.run(host='0.0.0.0',port=3000)
