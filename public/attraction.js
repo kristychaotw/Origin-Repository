@@ -261,15 +261,8 @@ document.getElementById("goReservation").addEventListener("click",function(e){
 function postBooking(){
     fetch(`/api/booking`)
     .then(res=> {
-        if (res.ok){
             return res.json()
-        }else if(res.status==403){
-            popLogin()
-        }else{
-            return res.json()
-        }
-    })
-    .then(result => {
+    }).then(result => {
         console.log(result)
         createBooking()
         ;
