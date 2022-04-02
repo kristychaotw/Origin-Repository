@@ -200,6 +200,11 @@ function popLogin(){
 }
 
 
+function onBookingPage(){
+    window.location.href = '/booking'
+}
+
+
 function postBooking(){
     const idNum=window.location.pathname.split('/')[2]
     const date=document.getElementById("calendar").value

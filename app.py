@@ -445,11 +445,11 @@ def dbDelete(sql):
 #============================================= Booking APIs ===========================================
 
 # 新增booking的table
-mydb=cnxpool.get_connection()
-mycursor=mydb.cursor()
-mycursor.execute("CREATE TABLE booking (id BIGINT PRIMARY KEY AUTO_INCREMENT, attractionID BIGINT NOT NULL, date DATE NOT NULL, time TINYTEXT NOT NULL, price SMALLINT NOT NULL,timenow DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
-mydb.commit()
-mydb.close()
+# mydb=cnxpool.get_connection()
+# mycursor=mydb.cursor()
+# mycursor.execute("CREATE TABLE booking (id BIGINT PRIMARY KEY AUTO_INCREMENT, attractionID BIGINT NOT NULL, date DATE NOT NULL, time TINYTEXT NOT NULL, price SMALLINT NOT NULL,timenow DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
+# mydb.commit()
+# mydb.close()
 
 
 # Post 建立新的預定行程
@@ -490,7 +490,7 @@ def getBooking():
 			print("booking[0]:",booking[0])
 			attractionID=str(booking[0])
 			sql="SELECT id,name,address,images FROM spotInfo10 WHERE id="+attractionID+""
-			spot=dbConnect(sql)[0]
+			spot=dbConnect(sql)
 			print("spot:",spot)
 			oneImg=spot[3].split(",")[1]
 			print("oneImg:",oneImg)
