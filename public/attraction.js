@@ -231,11 +231,12 @@ function postBooking(){
         }).then(res => {
             return res.json()
         }).then(data => {
-        if(data["ok"]){
-            console.log("儲存預定")
-            onBookingPage()
-        }else{
-            console.log(data["message"])}
+            console.log(data);
+        // if(data["ok"]){
+        //     console.log("儲存預定")
+        //     onBookingPage()
+        // }else{
+        //     console.log(data["message"])}
         })
         // .catch(error => {console.log(error)})
 }
