@@ -214,7 +214,7 @@ function postBooking(){
     }
 
     const price=f(time)
-    console.log(idNum,date, time ,price);
+    console.log(idNum, date, time ,price);
 
     fetch(`/api/booking`,{
         method:'POST',
@@ -224,7 +224,7 @@ function postBooking(){
         },
         body:JSON.stringify({
             'attractionId':idNum,
-            'date':date,
+            'date':str(date),
             'time':time,
             'price':price
         })
