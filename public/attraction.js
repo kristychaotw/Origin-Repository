@@ -237,7 +237,7 @@ function createBooking(){
         }else{
             console.log(data["message"])}
         })
-        .catch(error => log(error))
+        .catch(error => console.log(error))
 }
 
 // 景點頁預定行程按紐
@@ -250,6 +250,8 @@ document.getElementById("goReservation").addEventListener("click",function(e){
             return res.json()
         }else if(res.status==403){
             popLogin()
+        }else{
+            return res.json()
         }
     })
     .then(result => {
