@@ -445,11 +445,11 @@ def dbDelete(sql):
 #============================================= Booking APIs ===========================================
 
 # 新增booking的table
-# mydb=cnxpool.get_connection()
-# mycursor=mydb.cursor()
-# mycursor.execute("CREATE TABLE booking (id BIGINT PRIMARY KEY AUTO_INCREMENT, attractionID BIGINT NOT NULL, date DATE NOT NULL, time TINYTEXT NOT NULL, price SMALLINT NOT NULL,timenow DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
-# mydb.commit()
-# mydb.close()
+mydb=cnxpool.get_connection()
+mycursor=mydb.cursor()
+mycursor.execute("CREATE TABLE booking (id BIGINT PRIMARY KEY AUTO_INCREMENT, attractionID BIGINT NOT NULL, date DATE NOT NULL, time TINYTEXT NOT NULL, price SMALLINT NOT NULL,timenow DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
+mydb.commit()
+mydb.close()
 
 
 # Post 建立新的預定行程
