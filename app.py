@@ -489,7 +489,7 @@ def getBooking():
 			booking=bookingDB[0]
 			print("booking[0]:",booking[0])
 			attractionID=str(booking[0])
-			sql="SELECT id,name,address,images FROM spotInfo10 WHERE id="+attractionID+""
+			sql="SELECT id,name,address,images FROM spotinfo10 WHERE id="+attractionID+""
 			spot=dbConnect(sql)
 			print("spot:",spot)
 			oneImg=spot[3].split(",")[1]
