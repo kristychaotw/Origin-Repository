@@ -203,6 +203,7 @@ function popLogin(){
 function postBooking(){
     const idNum=window.location.pathname.split('/')[2]
     const date=document.getElementById("calendar").value
+    const newdate=str(date)
     const time=document.querySelector('input[type="radio"]:checked').getAttribute('name')
     let f = (time) => {
                     if(time == "morning"){
@@ -214,7 +215,7 @@ function postBooking(){
     }
 
     const price=f(time)
-    console.log(idNum, date, time ,price);
+    console.log(idNum, date, time ,price,newdate);
 
     fetch(`/api/booking`,{
         method:'POST',
@@ -224,7 +225,7 @@ function postBooking(){
         },
         body:JSON.stringify({
             'attractionId':idNum,
-            'date':str(date),
+            'date':newdate,
             'time':time,
             'price':price
         })
