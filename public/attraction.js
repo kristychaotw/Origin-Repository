@@ -203,7 +203,7 @@ function popLogin(){
 function postBooking(){
     const idNum=window.location.pathname.split('/')[2]
     const date=document.getElementById("calendar").value
-    const newdate=str(date)
+    const newdate=date.toString()
     const time=document.querySelector('input[type="radio"]:checked').getAttribute('name')
     let f = (time) => {
                     if(time == "morning"){
