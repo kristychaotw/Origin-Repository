@@ -200,7 +200,7 @@ function popLogin(){
 }
 
 
-function createBooking(){
+function postBooking(){
     const idNum=window.location.pathname.split('/')[2]
     const date=document.getElementById("calendar").value
     const time=document.querySelector('input[type="radio"]:checked').getAttribute('name')
@@ -255,16 +255,4 @@ document.getElementById("goReservation").addEventListener("click",function(e){
             postBooking()
         }
     })
-    
 })
-
-function postBooking(){
-    fetch(`/api/booking`)
-    .then(res=> {
-            return res.json()
-    }).then(result => {
-        console.log(result)
-        createBooking()
-        ;
-    })
-}
