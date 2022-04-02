@@ -457,7 +457,7 @@ def dbDelete(sql):
 def createBooking():
 	if session == {}:
 		print("session中無使用者")
-		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
+		return jsonify({"error": True,"message": "未登入系統，拒絕存取"})
 	else:
 		cleanTable=dbDelete("DELETE FROM booking")
 		print("cleanTable:",cleanTable)
@@ -473,7 +473,7 @@ def createBooking():
 		if result=="commit done":
 			return jsonify({"ok": True})
 		else:
-			return jsonify({"error": True,"message": "建立失敗，輸入不正確或其他原因"}),400
+			return jsonify({"error": True,"message": "建立失敗，輸入不正確或其他原因"})
 
 
 # Get 取得尚未確認下單的預定行程
@@ -481,7 +481,7 @@ def createBooking():
 def getBooking():
 	if session == {}:
 		print("session中無使用者")
-		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
+		return jsonify({"error": True,"message": "未登入系統，拒絕存取"})
 	else:
 		sql2="SELECT attractionID,date,time,price FROM booking"
 		bookingDB=dbConnect(sql2)
@@ -506,7 +506,7 @@ def getBooking():
 			"price":booking[3]
 			}}),200
 		else:
-			return jsonify({"data":None}),200
+			return jsonify({"data":None})
 
 
 #Delete 刪除目前的預定行程
@@ -514,7 +514,7 @@ def getBooking():
 def deleteBooking():
 	if session == {}:
 		print("session中無使用者")
-		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
+		return jsonify({"error": True,"message": "未登入系統，拒絕存取"})
 	else:
 		sql="DELETE FROM booking"
 		dbDelete(sql)
