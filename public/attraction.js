@@ -224,23 +224,22 @@ function postBooking(){
             'Content-Type': 'application/json'
         },
         body:JSON.stringify({
-            'attractionId':"12345",
-            // 'attractionId':idNum,
-            // 'date':newdate,
-            // 'time':time,
-            // 'price':price
+            'attractionId':idNum,
+            'date':newdate,
+            'time':time,
+            'price':price
         })
         }).then(res => {
             return res.json()
         }).then(data => {
             console.log(data)
-        // if(data["ok"]){
-        //     console.log("儲存預定")
-        //     onBookingPage()
-        // }else{
-        //     console.log(data["message"])}
+        if(data["ok"]){
+            console.log("儲存預定")
+            onBookingPage()
+        }else{
+            console.log(data["message"])}
         })
-        // .catch(error => {console.log(error)})
+        .catch(error => {console.log(error)})
 }
 
 // 景點頁預定行程按紐
