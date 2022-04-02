@@ -459,8 +459,8 @@ def createBooking():
 		print("session中無使用者")
 		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
 	else:
-		# cleanTable=dbDelete("DELETE FROM booking")
-		# print("cleanTable:",cleanTable)
+		cleanTable=dbDelete("DELETE FROM booking")
+		print("cleanTable:",cleanTable)
 		data=request.get_json()
 		attractionId=data["attractionId"]
 		dateUser=str(data["date"])
