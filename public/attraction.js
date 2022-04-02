@@ -223,10 +223,10 @@ function postBooking(){
             'Content-Type': 'application/json'
         },
         body:JSON.stringify({
-            'attractionId': idNum,
-            'date': date,
-            'time': time,
-            'price': price
+            'attractionId':idNum,
+            'date':date,
+            'time':time,
+            'price':price
         })
         }).then(res => {
             return res.json()
