@@ -504,7 +504,7 @@ def getBooking():
 			"date": booking[1],
 			"time": booking[2],
 			"price":booking[3]
-			}}),200
+			}})
 		else:
 			return jsonify({"data":None})
 
