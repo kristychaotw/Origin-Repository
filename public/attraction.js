@@ -224,7 +224,7 @@ function postBooking(){
             'Content-Type': 'application/json'
         },
         body:JSON.stringify({
-            'attractionId':12345,
+            'attractionId':"12345",
             // 'attractionId':idNum,
             // 'date':newdate,
             // 'time':time,
