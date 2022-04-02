@@ -492,7 +492,7 @@ def getBooking():
 			sql="SELECT id,name,address,images FROM spotinfo10 WHERE id="+attractionID+""
 			spot=dbConnect(sql)
 			print("spot:",spot)
-			oneImg=spot[3].split(",")[1]
+			oneImg=spot[3].split(",")[0]
 			print("oneImg:",oneImg)
 			return jsonify({"data":{"attraction": 
 			{
