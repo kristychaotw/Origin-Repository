@@ -239,7 +239,7 @@ function postBooking(){
         // }else{
         //     console.log(data["message"])}
         })
-        .catch(error => {console.log(error)})
+        // .catch(error => {console.log(error)})
 }
 
 // 景點頁預定行程按紐
