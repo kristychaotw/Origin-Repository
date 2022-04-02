@@ -244,6 +244,21 @@ function createBooking(){
 document.getElementById("goReservation").addEventListener("click",function(e){
     e.preventDefault()
     
+    fetch(`/api/user`)
+    .then(res=> {
+        return res.json()
+    }).then(result => {
+        console.log(result)
+        if(result.data==null){
+            popLogin()
+        }else{
+            postBooking()
+        }
+    })
+    
+})
+
+function postBooking(){
     fetch(`/api/booking`)
     .then(res=> {
         if (res.ok){
@@ -259,6 +274,4 @@ document.getElementById("goReservation").addEventListener("click",function(e){
         createBooking()
         ;
     })
-})
-
-
+}
