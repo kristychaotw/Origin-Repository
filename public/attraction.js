@@ -217,7 +217,7 @@ function postBooking(){
     const price=f(time)
     console.log(idNum, date, time ,price,newdate);
 
-    fetch(`/api/booking`,{
+    fetch(`/api/booking/`,{
         method:'POST',
         headers:{
             'Accept':'application/json',
