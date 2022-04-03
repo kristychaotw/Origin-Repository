@@ -140,7 +140,7 @@ footer{
 }
 
 /* 景點資訊RWD */
-@media screen and (max-width:600px) {
+@media screen and (max-width:992px) {
     .destination{
         display: grid;
         grid-template-columns: 1fr;
