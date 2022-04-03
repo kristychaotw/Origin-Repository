@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/member.css">
+    <link rel="stylesheet" type="text/css" href="/index.css">
+    <link rel="stylesheet" type="text/css" href="/booking.css">
+
+</head>
+
+<body>
+    <header>
+        <div class="container-fluid">
+            <div class="webName">
+                <a href="/"><h1>台北一日遊</h1></a>
+            </div>
+            <nav>
+                <ul>
+                    <li id="bookingBtnNav"><a href="javascript:;">預定行程</a></li>
+                    <li id="loginBtnNav"><a href="javascript:;">登入/註冊</a></li>
+                    <li id="logoutBtnNav"><a href="javascript:;">登出系統</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <!--會員系統-->
+    <div class="overlay"> </div>
+    <!--登入-->
+    <section class="popLogin popUp" id="Login">
+        <div class="whiteBlock">
+            <div class="closeBtn"></div>
+            <div class="title">登入會員帳號</div>
+            <form class="loginForm" method="patch" action="javascript:void(0);">
+                <input type="email" id="femailL" name="femail" placeholder="輸入電子郵件" required /><br>
+                <input type="password" id="fpwdL" name="fpwd" placeholder="輸入密碼" required /><br>
+                <input type="submit" value="登入帳戶" id="loginBtn" />
+            </form>
+            <p id="goSignup"><a href="javascript:;">還沒有帳戶？點此註冊</a></p>
+            <div class="msg"></div>
+        </div>
+    </section>
+    <!--註冊-->
+    <section class="popSignup popUp" id="Signup">
+        <div class="whiteBlock">
+            <div class="closeBtn"></div>
+            <div class="title">註冊會員帳號</div>
+            <form class="signupForm" method="post" action="javascript:void(0);">
+                <input type="text" id="fnameS" name="fname" placeholder="輸入姓名" required /><br>
+                <input type="email" id="femailS" name="femail" placeholder="輸入電子郵件" required /><br>
+                <input type="password" id="fpwdS" name="fpwd" placeholder="輸入密碼" required /><br>
+                <input type="submit" value="註冊新帳戶" id="signupBtn" />
+            </form>
+            <p id="goLogin"><a href="javascript:;">已有帳戶了？點此登入</a></p>
+            <div class="msg"></div>
+        </div>
+    </section>
+    <div class="container">
+        <h4 class="h4">您好，<span class="userName"></span>，待預定的行程如下：</h4>
+        <div class="mainContent">
+            <div class="destination">
+                <img class="mainImg" src='' alt='' />
+                <div class="dText">
+                    <div class="spot lh-13">台北一日遊：</div>
+                    <div class="date mt-30 lh-13">日期：<span></span></div>
+                    <div class="time mt-20 lh-13">時間：<span></span></div>
+                    <div class="price mt-20 lh-13">費用：<span></span></div>
+                    <div class="location mt-20 lh-13">地點：<span></span></div>
+                </div>
+                <div class="deleteIcon" id="deleteBtn"><img src="/images/icon_delete.png" alt="" srcset=""></div>
+            </div>
+            <hr>
+            <form action="" class="bookingForm" method="post" action="javascript:void(0);">
+                <h4 class="h4">您的連絡資訊</h4>
+                連絡姓名：<input type="text" name="" value="" class="conName"><br>
+                連絡信箱：<input type="email" name="" value="" class="conEmail"><br>
+                手機號碼：<input type="text" name="" value="" class="conNumber"><br>
+                <p><strong>請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</strong></p>
+                <hr>
+                <h4 class="h4">信用卡付款資訊</h4>
+                卡片號碼：<input type="tel" name="" value="" pattern="[0-9]{16}" placeholder="**** **** ****" required/><br>
+                過期時間：<input type="tel" name="" value="" pattern="[0-9]{4}" placeholder="MM/DD" required/><br>
+                驗證密碼：<input type="tel" name="" value="" pattern="[0-9]{3}" placeholder="CVV" required/><br>
+                <hr>
+                <p class="total">總價：<span class="totalPrice"></span></p>
+                <input type="submit" name="" value="確認訂購並付款" id="goBooking">
+            </form>
+        </div>
+
+    </div>
+    <footer id="ft">
+        <h6>COPYRIGHT&copy2021 台北一日遊</h6>
+    </footer>
+    <script src="../bookingpage.js"></script>
+
+
+</body>
+
+</html>

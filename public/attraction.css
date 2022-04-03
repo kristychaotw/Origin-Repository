@@ -9,6 +9,11 @@ body{
     font-size:16px;
 }
 
+.webName>a{
+    text-decoration: none;
+    color: #448899;
+}
+
 ul{
     list-style: none;
 }
@@ -237,7 +242,7 @@ footer>h6{
     margin-top: 15px;
 }
 
-input[type=submit]{
+/* input[type=submit]{
     background-color: #448899;
     color:white;
     border: none;
@@ -245,6 +250,18 @@ input[type=submit]{
     border-radius: 5px;
     margin-top: 25px;
     font-size: 19px;
+} */
+
+.booking>input[type=submit]{
+    background-color: #448899;
+    color:white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 25px;
+    font-size: 19px;
+    width: auto;
+    height: auto;
 }
 
 input[type='radio']:after {
