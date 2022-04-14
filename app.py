@@ -599,7 +599,7 @@ def createOrders():
 			}
 
 			r = requests.post(url, headers = headers, data=json.dumps(data)).json()
-			# print("r:",r)
+			print("付款資訊:",r)
 			if r["status"]==0:
 				print("payment success.")
 				updateSql="UPDATE triporder SET status=1 WHERE number="+number+""
