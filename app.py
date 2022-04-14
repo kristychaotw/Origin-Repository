@@ -579,6 +579,7 @@ def createOrders():
 				}),400
 		else:
 			# 連線 TAPPAY 準備付款
+			print("p-key:",os.environ.get('PAY_KEY'))
 			url="https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
 			headers={ 
 			"Content-Type": "application/json",
