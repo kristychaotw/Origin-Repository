@@ -29,55 +29,22 @@ def thankyou():
 	return render_template("thankyou.html")
 
 
-#=================================== 雲端資料庫連線==========================
-
+#========================================資料庫連線=========================================
 
 import mysql.connector
-import boto3
-import json
+import os
 from mysql.connector import pooling,connect,Error
 
-client=boto3.client('secretsmanager')
-response=client.get_secret_value(SecretId='conSQL')
-secretDict=json.loads(response['SecretString'])
-
-
 # 連線池
+
 dbconfig={
-	"host":secretDict['host'],
-	"user":secretDict['username'],
-	"password":secretDict['password'],
+	"host":"database-1.cohxynft1tdv.us-east-1.rds.amazonaws.com",
+	"user":os.environ.get('DB_USER'),
+	"password":os.environ.get('DB_PWD'),
 	"database":"travelsite",
+	"port":3306
 }
-cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20,pool_reset_session=True, **dbconfig)
-
-# 原本的連線
-# mydb = mysql.connector.connect(
-#     host=secretDict['host'],
-#     user=secretDict['username'],
-#     password=secretDict['password'],
-#     database="travelsite"
-# )
-# print(mydb)
-# mycursor=mydb.cursor()
-# mycursor.execute('SET GLOBAL max_allowed_packet=67108864')
-
-#========================================本機資料庫連線=========================================
-
-# import mysql.connector
-# import os
-# from mysql.connector import pooling,connect,Error
-
-# # 連線池
-
-# dbconfig={
-# 	"host":"localhost",
-# 	"user":os.environ.get('DB_USER'),
-# 	"password":os.environ.get('DB_PWD'),
-# 	"database":"travelsite",
-# 	"port":3306
-# }
-# cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20, **dbconfig)
+cnxpool = pooling.MySQLConnectionPool( pool_name = "myPool",pool_size = 20, **dbconfig)
 
 
 #=========================================本機版結束=============================
@@ -98,7 +65,20 @@ def dbConnect(sqlquery):
 			mydb.close()
 
 
-
+def dbConnectOne(sqlquery):
+	try:
+		mydb=cnxpool.get_connection()
+		mycursor=mydb.cursor()
+		mycursor.execute(sqlquery)
+		dbResult=mycursor.fetchone()
+		# mydb.commit()
+		return dbResult
+	except Error as e:
+		print("資料庫連線失敗:", e)
+	finally:
+		if (mydb.is_connected()):
+			mycursor.close()
+			mydb.close()
 
 
 def dbConnect_insert(name,email,password):
@@ -129,7 +109,7 @@ def attractionsAPI():
 	
 	def pick12Row(p):
 		numsofRows=dbConnect("SELECT COUNT(*) FROM spotinfo10")
-		print(numsofRows)
+		# print(numsofRows)
 		nokwLastPage=numsofRows[0][0]//12
 		# print("無KW最後一頁:",nokwLastPage)	
 
@@ -321,10 +301,10 @@ def createUser():
 	name=data['name']
 	email=data['email']
 	password=data['password']
-	print("使用者註冊輸入:",name,email,password)
+	# print("使用者註冊輸入:",name,email,password)
 
 	checkUser=dbConnect("SELECT name FROM member WHERE name="+"'"+name+"'")
-	print("checkuser:",checkUser)
+	# print("checkuser:",checkUser)
 	
 	if len(checkUser) != 0: # db裡面有資料
 		for i in checkUser: 
@@ -390,7 +370,7 @@ def getUserStatus():
 		print("session中有使用者，使用者名稱:",nameSession)
 		target="SELECT id, email,name FROM member WHERE name="+"'"+nameSession+"'"
 		Data=dbConnect(target)
-		print("Data是:",Data)
+		# print("Data是:",Data)
 
 		idDB = Data[0][0]
 		emailDB= Data[0][1]
@@ -444,7 +424,7 @@ def dbDelete(sql):
 			mydb.close()
 #============================================= Booking APIs ===========================================
 
-# 新增booking的table
+# 新增booking table
 # mydb=cnxpool.get_connection()
 # mycursor=mydb.cursor()
 # mycursor.execute("CREATE TABLE booking (id BIGINT PRIMARY KEY AUTO_INCREMENT, attractionID BIGINT NOT NULL, date DATE NOT NULL, time TINYTEXT NOT NULL, price SMALLINT NOT NULL,timenow DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
@@ -469,7 +449,7 @@ def createBooking():
 		sql="INSERT INTO booking (attractionID,date,time,price) VALUES (%s,%s,%s,%s)"
 		value=(attractionId,dateUser,timeUser,priceUser)	
 		result=dbInsert_table(sql,value)
-		print(result)
+		# print(result)
 		if result=="commit done":
 			return jsonify({"ok": True}),200
 		else:
@@ -487,13 +467,13 @@ def getBooking():
 		bookingDB=dbConnect(sql2)
 		if bookingDB != []:
 			booking=bookingDB[0]
-			print("booking[0]:",booking[0])
+			# print("booking[0]:",booking[0])
 			attractionID=str(booking[0])
 			sql="SELECT id,name,address,images FROM spotinfo10 WHERE id="+attractionID+""
 			spot=dbConnect(sql)[0]
-			print("spot:",spot)
+			# print("spot:",spot)
 			oneImg=spot[3].split(",")[1]
-			print("oneImg:",oneImg)
+			# print("oneImg:",oneImg)
 			return jsonify({"data":{"attraction": 
 			{
 				"id": spot[0],
@@ -510,7 +490,7 @@ def getBooking():
 			return jsonify({"data":None}),200
 
 
-#Delete 刪除目前的預定行程
+# Delete 刪除目前的預定行程
 @app.route("/api/booking",methods=["DELETE"])
 def deleteBooking():
 	if session == {}:
@@ -521,7 +501,166 @@ def deleteBooking():
 		dbDelete(sql)
 		return jsonify({"ok": True}),200
 	
+#===========================================新增order表單-複製from booking======================================
+mydb=cnxpool.get_connection()
+mycursor=mydb.cursor()
+mycursor.execute("DROP TABLE triporder")
+mycursor.execute("CREATE TABLE triporder (number BIGINT NOT NULL, trip JSON NOT NULL, contact JSON NOT NULL, status TINYINT NOT NULL)")
+mydb.commit()
+mydb.close()
 
+
+
+def createNumber():
+	from datetime import datetime
+	currentDay = datetime.now().day
+	currentMonth = datetime.now().month
+	currentYear = datetime.now().year
+	# print("test日期:",currentDay,type(currentDay))
+	n=dbConnectOne("SELECT COUNT(*) FROM triporder")[0]
+	# print("n:",n)
+	result=str(currentYear)+str(currentMonth)+str(currentDay)+"00"+str(n+1)
+	print("num:",result)
+	return result
+
+def addOrderData(sql,value):
+	try:
+		mydb=cnxpool.get_connection()
+		mycursor=mydb.cursor()
+		mycursor.execute(sql,value)
+		mydb.commit()
+		return "success add data"
+	except Error as e:
+		print("資料庫連線失敗:", e)
+	finally:
+		if (mydb.is_connected()):
+			mycursor.close()
+			mydb.close()
+
+def updateOrderData(sql):
+	try:
+		mydb=cnxpool.get_connection()
+		mycursor=mydb.cursor()
+		mycursor.execute(sql)
+		mydb.commit()
+		return "success update data"
+	except Error as e:
+		print("資料庫連線失敗:", e)
+	finally:
+		if (mydb.is_connected()):
+			mycursor.close()
+			mydb.close()
+
+import requests
+#================================== 金流API =======================================
+@app.route('/api/orders',methods=["POST"])
+def createOrders():
+	if session == {}:
+		print("session中無使用者")
+		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
+	else:
+		orderData=request.get_json()
+		print("前端傳送的值:",orderData)
+		order=json.dumps(orderData["order"])
+		contact=json.dumps(orderData["contact"])
+		prime=orderData["prime"]
+		status=1
+		number=createNumber()
+		# print("post內容:",order,contact,"prime密鑰:",prime,"訂單狀態:",status,number,"contact類型:",type(contact))
+		sql="INSERT INTO triporder (number,trip,contact,status) VALUES (%s,%s,%s,%s)"
+		value=(number,order,contact,status)
+		result=addOrderData(sql,value)
+		print("資料庫連線result:",result)
+		
+		if result != "success add data" :
+			return jsonify({
+				"error": true,
+				"message": "訂單建立失敗，輸入不正確或其他原因"
+				}),400
+		else:
+			# 連線 TAPPAY 準備付款
+			print("p-key:",os.environ.get('PAY_KEY'))
+			url="https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
+			headers={ 
+			"Content-Type": "application/json",
+			"x-api-key": os.environ.get('PAY_KEY'),
+			}
+			data={
+			"prime": prime,
+			"partner_key": os.environ.get('PAY_KEY'),
+			"merchant_id": "runformoneytw2022_CTBC",
+			"details":"TapPay Test",
+			"amount": orderData["order"]["price"],
+			"cardholder": {
+				"phone_number": orderData["contact"]["phone"],
+				"name": orderData["contact"]["name"],
+				"email": orderData["contact"]["email"],
+			},
+			"remember": True
+			}
+
+			r = requests.post(url, headers = headers, data=json.dumps(data)).json()
+			print("付款資訊:",r)
+			if r["status"]==0:
+				print("payment success.")
+				updateSql="UPDATE triporder SET status=1 WHERE number="+number+""
+				updateResult=updateOrderData(updateSql)
+				# print(updateResult)
+				# 付款成功，刪掉預定行程
+				sql="DELETE FROM booking"
+				dbDelete(sql)
+				return jsonify({
+					"data": {
+						"number": number,
+						"payment": {
+						"status": 0,
+						"message": "付款成功"
+						}
+					}
+					}),200
+
+			else:
+				print("payment failed.")
+				return jsonify({
+					"data": {
+						"number": number,
+						"payment": {
+						"status": 1,
+						"message": "付款失敗"
+						}
+					}
+					}),200
+
+
+@app.route('/api/order/<orderNumber>',methods=["GET"])
+def getOrder(orderNumber):
+	if session == {}:
+		print("session中無使用者")
+		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
+	else:
+		print("session有使用者")
+		# sql="SELECT number,trip,contact,status FROM triporder WHERE number="+orderNumber+""
+		sql="SELECT number,trip,contact,status FROM triporder WHERE number="+orderNumber+""
+		getOrder=dbConnectOne(sql)
+		# print("getOrder:",getOrder[0],"1是:",getOrder[1],"1type:",type(getOrder[1]),"2是:",getOrder[2],"3是:",getOrder[3])
+		# print("測試:",json.jumps(getORder),"測試type:",type(getOrder),"測試2:",json.loads(getORder),"測試type:",type(getOrder))
+		# print("測試type:",type(dict(getOrder)))
+		newOrder1=eval(getOrder[1])  # tuple=>dict
+		newOrder2=eval(getOrder[2])
+		# print("測試type:",type(newOrder1))
+		getOrderFinal={
+			"data": {
+				"number": getOrder[0],
+				"price": newOrder1["price"],
+				"trip":newOrder1["trip"],
+				"date": newOrder1["date"],
+				"time": newOrder1["time"]
+				},
+				"contact": newOrder2,
+				"status": getOrder[3]
+		}
+		print("getOrderFinal:",getOrderFinal)
+		return jsonify(getOrderFinal),200
 
 app.run(host='0.0.0.0',port=3000)
 # app.run(port=3000)

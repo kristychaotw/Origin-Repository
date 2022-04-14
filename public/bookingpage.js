@@ -10,7 +10,7 @@ window.onload=function loadBooking(){
         }
     })
     .then(result => {
-        console.log(result)
+        // console.log(result)
         showBooking(result)
     })
 
@@ -71,7 +71,7 @@ function showBooking(e){
         let date=e.data.date
         let newDate=new Date(date)
         let newDate2=newDate.getFullYear()+"-"+newDate.getMonth()+"-"+newDate.getDate()
-        console.log("newDate2:",newDate2);
+        // console.log("newDate2:",newDate2);
         document.querySelector(".mainImg").src=attraction.image
         showContent(attraction.name,".spot")
         showContent(attraction.address,".location>span")
@@ -79,6 +79,21 @@ function showBooking(e){
         showContent(e.data.price,".price>span")
         showContent(time,".time>span")
         showContent(e.data.price,".totalPrice")
+
+        let trip= {"order": {
+            "price": e.data.price,
+            "trip": {
+              "attraction": {
+                "id": attraction.id,
+                "name": attraction.name,
+                "address":attraction.address,
+                "image": attraction.image
+              }},
+              "date": newDate2,
+              "time": e.data.time
+            }
+          }
+        tripData(trip)
     }
 }
 
@@ -86,6 +101,13 @@ function showUser(e){
     showContent(e.data.name,".userName")
     showFormValue(e.data.name,".conName")
     showFormValue(e.data.email,".conEmail")
+
+    let contact={"contact": {
+                    "name": e.data.name,
+                    "email":e.data.email,
+                    "phone": null
+                  }}
+    userData(contact)
 
 }
 
@@ -102,5 +124,7 @@ document.getElementById("deleteBtn").addEventListener("click",function(){
     window.location.href = window.location.href
 
 })
+
+
 
 
