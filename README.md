@@ -2,8 +2,8 @@
 
 ![台北](https://user-images.githubusercontent.com/95632624/173238261-3dfa89a5-0665-45c9-9ee4-969dbca1e028.jpg)
 
-## About Taipei One Day Trip
-### 🚀 [Taipei One Day Trip](http://54.161.96.147:3000/)
+## About Taipei Day Trip
+### 🚀 [Taipei Day Trip](http://54.161.96.147:3000/)
 Travel Booking Website for people who want to have a day trip around Taipei, Taiwan.
 
 ## Features
