@@ -75,11 +75,9 @@ let contact = {};
 let trip = {};
 
 function passUserData(e) {
-  console.log("userData:", e);
   contact = e;
 }
 function passTripData(e) {
-  console.log("tripData:", e);
   trip = e;
 }
 

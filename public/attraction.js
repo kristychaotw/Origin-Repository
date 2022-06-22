@@ -101,7 +101,6 @@ function carousel() {
   function dotGoNext() {
     dotIndex = dotIndex + 1;
     newDotIndex = checkDotIndex(dotIndex);
-    console.log("newDotIndex", newDotIndex);
     if (newDotIndex > 1) {
       dots[newDotIndex - 1].classList.add("active");
       let preDotIndex = newDotIndex - 1;
@@ -277,7 +276,7 @@ function checkBookingData() {
     let selectDate = new Date(date);
     let today = new Date();
     if (selectDate.getTime() > today.getTime()) {
-      console.log("日期可選，呼叫存入預定");
+      // 日期可選，呼叫存入預定
       return createBooking();
     } else {
       return alert("日期已過，請選擇新日期");
