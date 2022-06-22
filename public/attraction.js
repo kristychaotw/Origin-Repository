@@ -71,7 +71,6 @@ function showAttractionData(idData) {
     const img = document.createElement("img");
     img.src = null;
     imgDiv.appendChild(img);
-    console.log("imgDiv:", imgDiv);
     document.querySelector(".slideContent").appendChild(imgDiv);
     document.querySelector(".slide" + num + ">img").src = imgID[x];
     dot = document.createElement("div");
@@ -282,17 +281,10 @@ function checkUser(e) {
 
 function checkBookingData() {
   const date = document.getElementById("calendar").value;
-  console.log("date:", date);
   if (date != "") {
-    year = date.split("-")[0];
-    mon = date.split("-")[1];
-    day = date.split("-")[2];
-    console.log("y", year, "m", mon, "d", day);
-    let selectDate = new Date(year, mon, day).toDateString();
-    let today = new Date().toDateString();
-    console.log("t-day:", today, typeof today);
-    console.log("s-day:", selectDate);
-    if (selectDate > today) {
+    let selectDate = new Date(date);
+    let today = new Date();
+    if (selectDate.getTime() > today.getTime()) {
       console.log("日期可選，呼叫存入預定");
       return createBooking();
     } else {
