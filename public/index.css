@@ -1,228 +1,237 @@
-body,header,nav,section,footer,h1,h2,h3,h4,h5,h6,p,ul,li,input{
-    padding:0;
-    margin:0
+body,
+header,
+nav,
+section,
+footer,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+li,
+input {
+  padding: 0;
+  margin: 0;
 }
 
-
-body{
-    font-family: 'Noto Sans TC', sans-serif;
-    font-size:16px;
+body {
+  font-family: "Noto Sans TC", sans-serif;
+  font-size: 16px;
 }
 
-.webName>a{
-    text-decoration: none;
-    color: #448899;
+.webName > a {
+  text-decoration: none;
+  color: #448899;
 }
 
-ul{
-    list-style: none;
+ul {
+  list-style: none;
 }
 
-li{
-    text-decoration: none;
+li {
+  text-decoration: none;
 }
 
-ul>li>a{
-    text-decoration: none;
+ul > li > a {
+  text-decoration: none;
 }
 
-a{
-    text-decoration: none;
+a {
+  text-decoration: none;
 }
 
-.container-fluid{
-    width: 100%;
-    max-width: 1200px;
-    margin:auto;
+.containerFluid {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
 }
-
-
 
 /* 待確認//stage1第二周作業是90% */
-.container{
-    width: 90%;
-    margin:auto;
-    max-width: 1200px;
+.container {
+  width: 90%;
+  margin: auto;
+  max-width: 1200px;
 }
 
-
-header{
-    position: sticky;
-    top:0;
-    left: 0;
-    background-color: #fff;
+header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: #fff;
 }
 
-
-header>.container-fluid{
+header > .containerFluid {
   height: 34px;
-  padding:10px 0;
+  padding: 10px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-nav>ul{
-    display: flex;
+nav > ul {
+  display: flex;
 }
-nav>ul>li{
-    padding:10px;
-}
-    
-.webName>h1{
-    font-weight: 700;
-    font-size: 30px;
-    color:#448899;
+nav > ul > li {
+  padding: 10px;
 }
 
-nav>ul>li>a{
-    font-weight: 400;
-    font-size: 16px;
-    color:#666666
+.webName > h1 {
+  font-weight: 700;
+  font-size: 30px;
+  color: #448899;
 }
 
-
-.banner{
-    height: 320px;
-    background-image: url(/images/welcome\ 1.png),linear-gradient(135deg, #AADDEE 0%, #66AABB 100%);
-    background-repeat: no-repeat;
-    background-position: 80% 100%;
+nav > ul > li > a {
+  font-weight: 400;
+  font-size: 16px;
+  color: #666666;
 }
 
-@media screen and (max-width:998px) {
-    .banner{
-        background-size: 70%, 100%;
-        background-position: 150% 100%;
+.banner {
+  height: 320px;
+  background-image: url(/images/welcome\ 1.png),
+    linear-gradient(135deg, #aaddee 0%, #66aabb 100%);
+  background-repeat: no-repeat;
+  background-position: 80% 100%;
+}
+
+@media screen and (max-width: 998px) {
+  .banner {
+    background-size: 70%, 100%;
+    background-position: 150% 100%;
+  }
+}
+
+.slogan {
+  padding-top: 85px;
+}
+
+.slogan > h3 {
+  color: #f8f8f8;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+.slogan > h4 {
+  color: #f8f8f8;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-top: 15px;
+}
+
+.searchBar {
+  height: 46px;
+  width: 400px;
+  margin-top: 25px;
+  display: flex;
+}
+
+@media screen and (max-width: 600px) {
+    .searchBar {
+      width: 90%;
     }
+  }
+
+.searchBar > .input[type="text"] {
+  width: auto;
+  margin-top: 0px;
+  padding: 15px;
+  font-weight: 700;
+  line-height: 16px;
+  font-size: 16px;
+  color: #757575;
+  border: none;
+  outline: none;
+  border-radius: 5px 0 0 5px;
 }
 
-.slogan{
-    padding-top:85px;
-}
-
-.slogan>h3{
-    color:#f8f8f8;
-    font-size: 1.75rem;
-    font-weight: 700;
-}
-.slogan>h4{
-    color:#f8f8f8;
-    font-size:1rem;
-    font-weight: 400;
-    margin-top: 15px;
-}
-
-.searchBar{
-    height: 46px;
-    width: 400px;
-    margin-top: 25px;
-    display: flex;
-}
-
-.searchBar>.input[type="text"]{
-    margin-top: 0px;
-    padding:15px;
-    font-weight: 700;
-    line-height: 16px;
-    font-size: 16px;
-    color:#757575;
-    border: none;
-    outline: none;
-    border-radius: 5px 0 0 5px;
-}
-
-.srBtn{
-    background-color: #448899;
-    padding:8px 15px;
-    border-radius: 0 5px 5px 0;
+.srBtn {
+  background-color: #448899;
+  padding: 8px 15px;
+  border-radius: 0 5px 5px 0;
 }
 
 /* 景點 - 桌機 -992px-1200px以上 */
 /* 景點 - 平板 - 600px-992px */
 /* 景點 - 手機 - 600px以下 */
-.boxGroup{
-    margin: 55px 0;
-    display: grid;
-    grid-gap: 30px;
-    grid-template-columns: repeat(4,1fr);
-    justify-items: stretch;
+.boxGroup {
+  margin: 55px 0;
+  display: grid;
+  grid-gap: 30px;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: stretch;
 }
 
 @media screen and (max-width: 992px) {
-.boxGroup{
-    grid-template-columns: repeat(2,1fr);
-}
+  .boxGroup {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media screen and (max-width: 600px) {
-.boxGroup{
-    grid-template-columns: repeat(1,1fr);
-}
+  .boxGroup {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 /* 景點卡片樣式 */
-.box{
-    border: 1px solid #e8e8e8;
-    border-radius: 5px;
+.box {
+  border: 1px solid #e8e8e8;
+  border-radius: 5px;
 }
 
-.txtBox{
-    padding:12px 10px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    grid-template-areas: "Name Name"
-                         "MRT type";
-    grid-row-gap: 15px;
+.txtBox {
+  padding: 12px 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "Name Name"
+    "MRT type";
+  grid-row-gap: 15px;
 }
 
-
-
-.imgBox{
-    background-image: url();
-    background-repeat: no-repeat;
-    width: 100%;
-    padding-bottom: 66.65%;
-    background-size: cover;
+.imgBox {
+  background-image: url();
+  background-repeat: no-repeat;
+  width: 100%;
+  padding-bottom: 66.65%;
+  background-size: cover;
 }
 
-/* .imgBox>img{
-    width: 100%;
-    object-fit: cover;
-} */
-
-.spotName{
-    grid-area: Name;
-    /* margin-bottom: 15px; */
-    font-size: 1rem;
-    font-weight: 700;
-    color:#757575;
+.spotName {
+  grid-area: Name;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #757575;
 }
-.spotMRT{
-    grid-area:MRT;
-    font-size: 1rem;
-    line-height: 1rem;
-    font-weight: 400;
-    color:#757575;
+.spotMRT {
+  grid-area: MRT;
+  font-size: 1rem;
+  line-height: 1rem;
+  font-weight: 400;
+  color: #757575;
 }
-.spotType{
-    grid-area: type;
-    justify-self: end;
-    font-size: 1rem;
-    line-height: 1rem;
-    font-weight: 400;
-    color:#757575;
+.spotType {
+  grid-area: type;
+  justify-self: end;
+  font-size: 1rem;
+  line-height: 1rem;
+  font-weight: 400;
+  color: #757575;
 }
 
-footer{
-    margin:auto;
-    height: 104px;
-    background-color: #757575;
+footer {
+  margin: auto;
+  height: 104px;
+  background-color: #757575;
 }
-footer>h6{
-    color:#ffffff;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 104px;
-    text-align: center;
+footer > h6 {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 104px;
+  text-align: center;
 }

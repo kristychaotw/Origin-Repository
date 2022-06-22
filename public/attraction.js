@@ -1,265 +1,287 @@
-// window.onload = function () {
+getAttractionData();
+// 事件註冊: 半日、全日費率
+const morningBtn = document.getElementById("morning");
+const eveningBtn = document.getElementById("evening");
+const priceTxt = document.getElementById("priceTxt");
+morningBtn.addEventListener("click", clickMorningBtn);
+eveningBtn.addEventListener("click", clickEveningBtn);
+// 事件註冊: 預定行程按紐
+const goReservationBtn = document.getElementById("goReservation");
+goReservationBtn.addEventListener("click", checkUser);
 
+// 半日遊、全日遊不同費率
+function clickMorningBtn() {
+  if ((checked = false)) {
+    checked = true;
+    priceTxt.innerHTML = "新台幣 2000 元";
+    eveningBtn.checked = false;
+  } else {
+    eveningBtn.checked = false;
+    priceTxt.innerHTML = "新台幣 2000 元";
+  }
+}
 
-    // 半日遊、全日遊不同費率
-    const btn1 = document.getElementById("morning")
-    const btn2 = document.getElementById("evening")
-    const priceTxt = document.getElementById("priceTxt")
+function clickEveningBtn() {
+  if ((checked = false)) {
+    checked = true;
+    priceTxt.innerHTML = "新台幣 2500 元";
+    morningBtn.checked = false;
+  } else {
+    morningBtn.checked = false;
+    priceTxt.innerHTML = "新台幣 2500 元";
+  }
+}
 
-    btn1.addEventListener("click", btn1Click)
-    btn2.addEventListener("click", btn2Click)
+// 載入景點資料
+function getAttractionData() {
+  let id = window.location.pathname.split("/")[2];
 
+  fetch(`/api/attraction/${id}`)
+    .then((res) => {
+      return res.json();
+    })
+    .then((data) => {
+      let idData = data;
+      showAttractionData(idData);
+    });
+}
 
-    function btn1Click() {
-        if (checked = false) {
-            checked = true;
-            priceTxt.innerHTML = "新台幣 2000 元";
-            btn2.checked = false;
-        } else {
-            btn2.checked = false;
-            priceTxt.innerHTML = "新台幣 2000 元";
-        }
+// 將景點資料呈現在畫面上
+function showAttractionData(idData) {
+  nameID = document.createTextNode(idData.data.name);
+  document.getElementById("name").appendChild(nameID);
+  typeID = document.createTextNode(idData.data.category);
+  document.getElementById("type").appendChild(typeID);
+  mrtID = document.createTextNode(idData.data.mrt);
+  document.getElementById("MRT").appendChild(mrtID);
+  storyID = document.createTextNode(idData.data.description);
+  document.getElementById("story").appendChild(storyID);
+  addressID = document.createTextNode(idData.data.address);
+  document.getElementById("address").appendChild(addressID);
+  transportID = document.createTextNode(idData.data.transport);
+  document.getElementById("transport").appendChild(transportID);
+
+  let imgID = null;
+  imgID = idData.data.images;
+
+  for (x = 0; x < imgID.length; x++) {
+    const imgDiv = document.createElement("div");
+    num = x + 1;
+    imgDiv.classList.add("slide", "slide" + num + "");
+    const img = document.createElement("img");
+    img.src = null;
+    imgDiv.appendChild(img);
+    document.querySelector(".slideContent").appendChild(imgDiv);
+    document.querySelector(".slide" + num + ">img").src = imgID[x];
+    dot = document.createElement("div");
+    dot.textContent = "";
+    dot.classList.add("dots", "dot" + num + "");
+    document.querySelector(".dot").appendChild(dot);
+  }
+  carousel();
+}
+
+// 輪播
+function carousel() {
+  // 事件註冊: 輪播事件
+  const nextBtn = document.getElementById("next");
+  const previousBtn = document.getElementById("previous");
+  nextBtn.addEventListener("click", goNext);
+  previousBtn.addEventListener("click", goPrevious);
+  function checkDotIndex(n) {
+    if (n < 1) {
+      return dotNum;
+    } else if (n > dotNum) {
+      return 1;
+    } else {
+      return n;
     }
+  }
 
-    function btn2Click() {
-        if (checked = false) {
-            checked = true;
-            priceTxt.innerHTML = "新台幣 2500 元";
-            btn1.checked = false;
-        } else {
-            btn1.checked = false;
-            priceTxt.innerHTML = "新台幣 2500 元";
-        }
+  function dotGoNext() {
+    dotIndex = dotIndex + 1;
+    newDotIndex = checkDotIndex(dotIndex);
+    if (newDotIndex > 1) {
+      dots[newDotIndex - 1].classList.add("active");
+      let preDotIndex = newDotIndex - 1;
+      let newPreDotIndex = checkDotIndex(preDotIndex);
+      dots[newPreDotIndex - 1].classList.remove("active");
+    } else {
+      lastDot.classList.remove("active");
+      firstDot.classList.add("active");
+      dotIndex = 1;
     }
-
-    // 載入Fetch資料
-    let idData = null;
-    let id = window.location.pathname;
-    const src = `/api${id}`
-    async function initData() {
-        const response = await fetch(src)
-        const result_1 = await response.json()
-        idData = result_1
+  }
+  function dotGoPrevious() {
+    dotIndex = dotIndex - 1;
+    newDotIndex = checkDotIndex(dotIndex);
+    if (newDotIndex < 8) {
+      dots[newDotIndex - 1].classList.add("active");
+      let nextDotIndex = newDotIndex + 1;
+      let newNextDotIndex = checkDotIndex(nextDotIndex);
+      dots[newNextDotIndex - 1].classList.remove("active");
+    } else {
+      lastDot.classList.add("active");
+      firstDot.classList.remove("active");
+      dotIndex = dotNum;
     }
-    async function main() {
-        let i = await initData();
-        render(i)
+  }
+
+  function goNext() {
+    currentOffset = currentOffset - imgWidth;
+    dotGoNext();
+
+    if (currentOffset > widthAll) {
+      slide.style.marginLeft = "" + currentOffset + "px";
+    } else {
+      slide.style.marginLeft = 0;
+      currentOffset = 0;
     }
+  }
 
-    let imgID = null;
+  function goPrevious() {
+    currentOffset = currentOffset + imgWidth;
+    dotGoPrevious();
 
-
-    function render() {
-        nameID = document.createTextNode(idData.data.name)
-        document.getElementById("name").appendChild(nameID)
-        typeID = document.createTextNode(idData.data.category)
-        document.getElementById("type").appendChild(typeID)
-        mrtID = document.createTextNode(idData.data.mrt)
-        document.getElementById("MRT").appendChild(mrtID)
-        storyID = document.createTextNode(idData.data.description)
-        document.getElementById("story").appendChild(storyID)
-        addressID = document.createTextNode(idData.data.address)
-        document.getElementById("address").appendChild(addressID)
-        transportID = document.createTextNode(idData.data.transport)
-        document.getElementById("transport").appendChild(transportID)
-
-
-
-        imgID = idData.data.images
-        // console.log("imgID:",imgID);
-
-        for (x = 0; x < imgID.length; x++) {
-            const imgDiv = document.createElement("div")
-            num = x + 1
-            imgDiv.classList.add("slide", "slide" + num + "")
-            const img = document.createElement('img')
-            img.src = null
-            imgDiv.appendChild(img)
-            console.log('imgDiv:', imgDiv);
-            document.querySelector(".slideContent").appendChild(imgDiv)
-            document.querySelector(".slide" + num + ">img").src = imgID[x]
-            // 圖上小點
-            dot = document.createElement('div')
-            dot.textContent = ""
-            dot.classList.add("dots", "dot" + num + "")
-            document.querySelector(".dot").appendChild(dot)
-        }
-        carousel()
+    if (currentOffset <= 0) {
+      slide.style.marginLeft = "" + currentOffset + "px";
+    } else {
+      slide.style.marginLeft = "" + (widthAll + imgWidth) + "px";
+      currentOffset = widthAll + imgWidth;
     }
+  }
 
-    main()
+  // 輪播點點
+  let firstDot = document.querySelector(".dot").firstChild;
+  let lastDot = document.querySelector(".dot").lastChild;
+  firstDot.classList.add("active");
+  let dotNum = document.querySelector(".dot").childElementCount;
+  let dotIndex = 1;
+  let dots = document.querySelector(".dot").children;
 
+  //  輪播換圖
+  let currentOffset = 0;
+  const slide = document.getElementById("slideContent");
+  // 單張圖片寬度
+  let imgWidth = document.querySelector(".slide").getBoundingClientRect().width;
+  // slide總寬度
+  let slideWidth = document
+    .querySelector(".slideContent")
+    .getBoundingClientRect().width;
+  let widthAll = slideWidth * -1;
 
-
-    // 輪播
-    function carousel() {
-        // 輪播點點
-        const firstDot = document.querySelector('.dot').firstChild
-        const lastDot = document.querySelector('.dot').lastChild
-        console.log('firstDot:', firstDot);
-        firstDot.classList.add("active")
-        dotNum = document.querySelector('.dot').childElementCount
-        console.log('dotNum:', dotNum);
-
-
-        // 1. 取得輪播需要數值
-        // 單張圖片寬度
-        let imgWidth = document.querySelector(".slide").getBoundingClientRect().width
-        console.log("imgWidth:", imgWidth);
-        // slide總寬度
-        let contentWidth = document.querySelector(".slideContent").getBoundingClientRect().width
-        console.log("slideContent:", contentWidth);
-        let widthAll = contentWidth * (-1)
-        console.log("widthAll:", widthAll);
-
-        // 2. 註冊輪播事件
-        const next = document.getElementById("next")
-        const previous = document.getElementById("previous")
-        next.addEventListener("click", goNext)
-        previous.addEventListener("click", goPrevious)
-
-        // 3. 設定操作對象&紀錄位置
-        const content = document.getElementById("slideContent")
-        let currentOffset = 0;
-        let index = 1
-        activeDot = document.querySelector('.active')
-        // console.log('activeDots:',activeDot);
-        // nextDot = document.querySelector('.active').nextSibling
-        // console.log('next:',nextDot);
-        // previousDot = document.querySelector('.active').previousSibling
-        // console.log('previous:',previousDot);
-
-
-        function goNext() {
-            activeDot = document.querySelector('.dots.active')
-            nextDot = document.querySelector('.dots.active').nextSibling
-            previousDot = document.querySelector('.dots.active').previousSibling
-
-            currentOffset = currentOffset - imgWidth
-            console.log('右移動:', currentOffset);
-
-            if (currentOffset > widthAll) {
-                content.style.marginLeft = "" + currentOffset + "px";
-                index = index + 1
-                console.log("現在位置:", currentOffset);
-                console.log("index:", index);
-                activeDot.classList.remove("active")
-                nextDot.classList.add("active")
-
-            } else {
-                // content.style.marginLeft = ""+currentOffset+"px";
-                content.style.marginLeft = 0;
-                currentOffset = 0;
-                index = 1
-                console.log("現在位置:", currentOffset)
-                console.log("index:", index);
-                activeDot.classList.remove("active")
-                firstDot.classList.add("active")
-            }
-        }
-
-        function goPrevious() {
-            activeDot = document.querySelector('.dots.active')
-            nextDot = document.querySelector('.dots.active').nextSibling
-            previousDot = document.querySelector('.dots.active').previousSibling
-
-            currentOffset = currentOffset + imgWidth
-            console.log('左移動:', currentOffset);
-
-            if (currentOffset <= 0) {
-                content.style.marginLeft = "" + currentOffset + "px";
-                index = index - 1
-                console.log("現在位置:", currentOffset);
-                console.log("index:", index);
-                activeDot.classList.remove("active")
-                previousDot.classList.add("active")
-            } else {
-                // content.style.marginLeft = ""+currentOffset+"px";
-                content.style.marginLeft = "" + (widthAll + imgWidth) + "px";
-                currentOffset = widthAll + imgWidth;
-                index = dotNum;
-                console.log("現在位置:", currentOffset)
-                console.log("index:", index);
-                activeDot.classList.remove("active")
-                lastDot.classList.add("active")
-            }
-        }
-    }
-
+  //close loading animation
+  document.querySelector(".loaderWrapper").style.display = "none";
+  document.body.classList.remove("preload");
+}
 
 //=========================景點頁預定行程按紐=========================================
 
-function popLogin(){
-    document.querySelectorAll(".popUp").forEach(popUp => popUp.classList.add("active"))
-    document.querySelector(".overlay").classList.add("active")
-    document.getElementById("Login").style.zIndex='99'
-    document.getElementById("Login").style.opacity='1'
-    document.getElementById("Signup").style.zIndex='1'
-    document.getElementById("Signup").style.opacity='0'
-    msg("")
+function popLogin() {
+  document
+    .querySelectorAll(".popUp")
+    .forEach((popUp) => popUp.classList.add("active"));
+  document.querySelector(".overlay").classList.add("active");
+  document.getElementById("Login").style.zIndex = "99";
+  document.getElementById("Login").style.opacity = "1";
+  document.getElementById("Signup").style.zIndex = "1";
+  document.getElementById("Signup").style.opacity = "0";
+  msg("");
 }
 
-
-function onBookingPage(){
-    window.location.href = '/booking'
+function goBookingPage() {
+  window.location.href = "/booking";
 }
 
-
-function postBooking(){
-    const idNum=window.location.pathname.split('/')[2]
-    const date=document.getElementById("calendar").value
-    const newdate=date.toString()
-    const time=document.querySelector('input[type="radio"]:checked').getAttribute('name')
-    let f = (time) => {
-                    if(time == "morning"){
-                        console.log("上午");
-                        return 2000
-                    }else{
-                        console.log("下午");
-                        return 2500}
-    }
-
-    const price=f(time)
-    console.log(idNum, date, time ,price,newdate);
-
-    fetch(`/api/booking`,{
-        method:'POST',
-        headers:{
-            'Accept':'application/json',
-            'Content-Type': 'application/json'
-        },
-        body:JSON.stringify({
-            'attractionId':idNum,
-            'date':newdate,
-            'time':time,
-            'price':price
-        })
-        }).then(res => {
-            return res.json()
-        }).then(data => {
-            console.log(data)
-        if(data["ok"]){
-            console.log("儲存預定")
-            onBookingPage()
-        }else{
-            console.log(data["message"])}
-        })
-        .catch(error => {console.log(error)})
+function priceRate(time) {
+  if (time == "morning") {
+    // 上午;
+    return 2000;
+  } else {
+    // 下午;
+    return 2500;
+  }
 }
 
-// 景點頁預定行程按紐
-document.getElementById("goReservation").addEventListener("click",function(e){
-    e.preventDefault()
-    
-    fetch(`/api/user`)
-    .then(res=> {
-        return res.json()
-    }).then(result => {
-        console.log(result)
-        if(result.data==null){
-            popLogin()
-        }else{
-            postBooking()
-        }
+let createBookingStatus = false;
+// 將 booking 存入資料庫
+function createBooking() {
+  const idNum = window.location.pathname.split("/")[2];
+  const date = document.getElementById("calendar").value;
+  const newdate = date.toString();
+  const time = document
+    .querySelector('input[type="radio"]:checked')
+    .getAttribute("name");
+  const price = priceRate(time);
+
+  if (createBookingStatus != true) {
+    createBookingStatus == true;
+    fetch(`/api/booking`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        attractionId: idNum,
+        date: newdate,
+        time: time,
+        price: price,
+      }),
     })
-})
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        if (data["ok"]) {
+          console.log("儲存預定");
+        } else {
+          console.log(data["message"]);
+        }
+        createBookingStatus == false;
+      })
+      .catch((error) => {
+        console.log(error);
+        createBookingStatus == false;
+      });
+  } else {
+  }
+}
+
+let checkUserStatus = false;
+// 確認使用者
+function checkUser(e) {
+  e.preventDefault();
+  if (checkUserStatus != true) {
+    checkUserStatus = true;
+    fetch(`/api/user`)
+      .then((res) => {
+        return res.json();
+      })
+      .then((result) => {
+        if (result.data == null) {
+          popLogin();
+        } else {
+          checkBookingData();
+        }
+        checkUserStatus = false;
+      });
+  } else {
+  }
+}
+
+function checkBookingData() {
+  const date = document.getElementById("calendar").value;
+  if (date != "") {
+    let selectDate = new Date(date);
+    let today = new Date();
+    if (selectDate.getTime() > today.getTime()) {
+      // 日期可選，呼叫存入預定
+      return createBooking();
+    } else {
+      return alert("日期已過，請選擇新日期");
+    }
+  } else {
+    return alert("日期空白，請重新選擇");
+  }
+}
