@@ -29,19 +29,18 @@ TPDirect.card.onUpdate(function (update) {
   // update.canGetPrime === true
   // --> you can call TPDirect.card.getPrime()
   if (update.canGetPrime) {
+    // getPrimeOK
     // Enable submit Button to get prime.
     submitButton.removeAttribute("disabled");
-    console.log("getPrimeOK");
   } else {
+    // getPrimeNotOK
     // Disable submit Button to get prime.
     submitButton.setAttribute("disabled", true);
-    console.log("getPrimeNotOK");
   }
 });
 
 // call TPDirect.card.getPrime when user submit form to get tappay prime
 document.getElementById("bookingForm").addEventListener("submit", onSubmit);
-// $('form').on('submit', onSubmit)
 
 let prime = "";
 function onSubmit(event) {

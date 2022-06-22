@@ -21,7 +21,6 @@ function getBooking() {
       }
     })
     .then((result) => {
-      console.log("fetchbooking:", result);
       showBooking(result);
     });
 }
@@ -31,7 +30,6 @@ function getUser() {
       return res.json();
     })
     .then((data) => {
-      console.log("fetchUser:", data);
       showUser(data);
     });
 }
@@ -42,12 +40,10 @@ function showContent(content, className) {
   document.querySelector(className).appendChild(box);
 }
 function showFormValue(content, className) {
-  console.log("className:", className);
   document.querySelector(className).value = content;
 }
 
 function showBooking(e) {
-  console.log("showbooking-e:", e);
   if (e.data == null) {
     document.querySelector(".mainContent").innerHTML =
       "目前沒有任何待預訂的行程";
@@ -98,8 +94,6 @@ function showBooking(e) {
 }
 
 function showUser(e) {
-  console.log("showUser-e:", e);
-  console.log("e.data:", e.data);
   showContent(e.data.name, ".userName");
 
   if (document.querySelector(".conName") != null) {
@@ -143,7 +137,6 @@ function logout() {
       return res.json();
     })
     .then((data) => {
-      console.log("logout f: ", data);
       location.reload();
     }); // 重新載入頁面
 
