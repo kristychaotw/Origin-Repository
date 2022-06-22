@@ -116,7 +116,6 @@ function carousel() {
   function dotGoPrevious() {
     dotIndex = dotIndex - 1;
     newDotIndex = checkDotIndex(dotIndex);
-    console.log("newDotIndex", newDotIndex);
     if (newDotIndex < 8) {
       dots[newDotIndex - 1].classList.add("active");
       let nextDotIndex = newDotIndex + 1;
@@ -132,8 +131,6 @@ function carousel() {
   function goNext() {
     currentOffset = currentOffset - imgWidth;
     dotGoNext();
-    console.log("widthAll:", widthAll);
-    console.log("currentOffset:", currentOffset);
 
     if (currentOffset > widthAll) {
       slide.style.marginLeft = "" + currentOffset + "px";
@@ -146,8 +143,6 @@ function carousel() {
   function goPrevious() {
     currentOffset = currentOffset + imgWidth;
     dotGoPrevious();
-    console.log("widthAll:", widthAll);
-    console.log("currentOffset:", currentOffset);
 
     if (currentOffset <= 0) {
       slide.style.marginLeft = "" + currentOffset + "px";
@@ -201,10 +196,10 @@ function goBookingPage() {
 
 function priceRate(time) {
   if (time == "morning") {
-    console.log("上午");
+    // 上午;
     return 2000;
   } else {
-    console.log("下午");
+    // 下午;
     return 2500;
   }
 }
@@ -219,7 +214,6 @@ function createBooking() {
     .querySelector('input[type="radio"]:checked')
     .getAttribute("name");
   const price = priceRate(time);
-  console.log(idNum, date, time, price, newdate);
 
   if (createBookingStatus != true) {
     createBookingStatus == true;
@@ -240,7 +234,6 @@ function createBooking() {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
         if (data["ok"]) {
           console.log("儲存預定");
         } else {
@@ -267,7 +260,6 @@ function checkUser(e) {
         return res.json();
       })
       .then((result) => {
-        console.log(result);
         if (result.data == null) {
           popLogin();
         } else {
