@@ -1,32 +1,24 @@
-// 全域變數，檢查fetch執行的狀態
-let fetching = false;
-console.log("fetching is:",fetching);
-
+// getData()=>showData()
+let fetchingIndex = false;
 
 // 函式1 : 執行fetch，變動的page和kw用函式參數代入
 function getData(loadPage,KW){
 
-    if(fetching != true){
+    if(fetchingIndex != true){
     let src=`/api/attractions?page=${loadPage}&keyword=${KW}`
-    // let src="/api/attractions?page="+loadPage+"&keyword="+KW+""
-    fetching = true
+    fetchingIndex = true
     fetch(src)
     .then(response => response.json())
-    .then(data => { loadData(data)    
-    fetching = false
-    console.log("完成fetching");
+    .then(data => { showData(data)    
+    fetchingIndex = false
     })
     }else{
-        console.log("不做任何事");
-    // fetching = false
+    
     }
 }
 
 // 函式2 : 拿到fetch傳回資料，開始做盒子
-function loadData(data){
-    // console.log("nextPate:",data.nextPage)
-    // console.log("API回傳:",data);
-    // console.log("長度:",data.data.length);
+function showData(data){
     if ( data.data[0] == null){
         document.getElementById("boxGroup").innerHTML="無此景點資料"
     }else{
@@ -39,11 +31,8 @@ function loadData(data){
             MRT=data.data[i].mrt
             type=data.data[i].category
             img=data.data[i].images[0]
-            //新增紀錄id
             id=data.data[i].id
-            // console.log("會使用的資料:",name,MRT,type,img,id);
 
-            // 做盒子
             num=(data.nextPage-1)*12+(i+1)
             const div1=document.createElement("div")
             div1.classList.add("box", "box"+num+"");
@@ -57,7 +46,6 @@ function loadData(data){
             div5.classList.add("spotMRT");
             const div6=document.createElement("div")
             div6.classList.add("spotType");
-            // 多做一個a，設href為/id，append到.boxGroup，把做好的盒子放進去
             const aDiv=document.createElement('a')
             aDiv.setAttribute("href",`/attraction/${id}`)
             document.querySelector(".boxGroup").appendChild(aDiv)
@@ -67,13 +55,10 @@ function loadData(data){
             document.querySelector(".txtBox"+num+"").appendChild(div4)
             document.querySelector(".txtBox"+num+"").appendChild(div5)
             document.querySelector(".txtBox"+num+"").appendChild(div6)
-            // console.log("做好的盒子:",div1);
         
 
 
-            // 資料塞到盒子
             let newBox =".box"+[(data.nextPage-1)*12+(i+1)]
-            // console.log('this is newBox',newBox)
             let newName = document.createTextNode (name);
             document.querySelector(""+newBox+">.txtBox>.spotName").appendChild(newName)
             let newMRT = document.createTextNode (MRT);
@@ -81,14 +66,13 @@ function loadData(data){
             let newType = document.createTextNode (type);
             document.querySelector(""+newBox+">.txtBox>.spotType").appendChild(newType)
             let imgBox = document.querySelector(""+newBox+">.imgBox")
-            // console.log("this is imgBox:",imgBox);
             imgBox.style.backgroundImage = "url(" + img + ")";
-            // console.log("final url:",imgBox);
             
-            // 把NextPage資訊傳回去
             let NP =data.nextPage
-            // console.log("傳回去的NP:",NP);
             getnP(NP)
+            document.querySelector(".loaderWrapper").style.display='none'
+            document.body.classList.remove('preload')
+
         }
     }    
 }
@@ -96,15 +80,12 @@ function loadData(data){
 
 // 觀察器
 let options = {
-    // root: document.querySelector("scrollArea"),
     rootMargin:'0px',
     threshold:0.5   // 看到一半的target，就執行callback
 }
 let callback = (entries, observer) => {
     entries.forEach(entry => {
-        // console.log("IO works");
         newSrc=`/api/attractions?page=${loadPage}&keyword=${userKW}`
-        // console.log("loadPage使用:",loadPage,"kw:",userKW);
         if(loadPage != null){
         getData(loadPage,userKW)
         }else{
@@ -116,46 +97,37 @@ let callback = (entries, observer) => {
 let observer = new IntersectionObserver(callback, options)
 
 
-
-//===============================================================================
-// 主程式
-//===============================================================================
-let userKW = ''
-// console.log("目前的userKW:",userKW);
-
-let loadPage = 0
-// console.log("目前的要載入的page:",loadPage);
-
-
-
-// 第一次載入
-getData(loadPage,userKW)
-
-// 關鍵字搜尋
-const srBtn = document.getElementById('srBtn')
-srBtn.addEventListener("click",function(){
-    userKW = document.getElementById("userKW").value
-    // console.log('userKW:',userKW);
-    // console.log('srBtn:',srBtn);
-    // 呼叫getData，傳入關鍵字
-    getData(0,userKW)
-    // 清空畫面
-    document.getElementById("boxGroup").innerHTML=''
-})
-
-// 判斷: 如果nP不是空值，代表有下一頁，加上捲動觀察器，開始製作div跟載入下頁資料
 function getnP(p){
     loadPage = p
-    // console.log("下一頁:", loadPage );
 
     if (loadPage != null) {
         const target = document.getElementById("ft")
         observer.observe(target)
     }else{
-        console.log("no data to load");
+        // no data to load
         const target = document.getElementById("ft")
         observer.unobserve(target)
     }
 }
+
+
+//===============================================================================
+// 主程式
+//===============================================================================
+let userKW = ''
+let loadPage = 0
+
+
+// 第一次載入
+getData(loadPage,userKW)
+
+// 關鍵字搜尋功能
+document.getElementById('srBtn').addEventListener("click",function(){
+    userKW = document.getElementById("userKW").value
+    getData(0,userKW)
+    document.getElementById("boxGroup").innerHTML=''
+})
+
+
 
 

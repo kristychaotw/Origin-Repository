@@ -55,7 +55,6 @@ def dbConnect(sqlquery):
 		mycursor=mydb.cursor()
 		mycursor.execute(sqlquery)
 		dbResult=mycursor.fetchall()
-		# mydb.commit()
 		return dbResult
 	except Error as e:
 		print("資料庫連線失敗:", e)
@@ -71,7 +70,6 @@ def dbConnectOne(sqlquery):
 		mycursor=mydb.cursor()
 		mycursor.execute(sqlquery)
 		dbResult=mycursor.fetchone()
-		# mydb.commit()
 		return dbResult
 	except Error as e:
 		print("資料庫連線失敗:", e)
@@ -101,24 +99,19 @@ def dbConnect_insert(name,email,password):
 @app.route("/api/attractions")
 def attractionsAPI():
 	page=request.args.get("page",None)
-	p=int(page or 0) # 輸入值從字串傳成數字
+	p=int(page or 0) 
 	kw=request.args.get("keyword",None)
-	# print("搜尋字串結果:",p,kw,"kw型態:",type(kw))
 
 	col="id,name,category,description,address,transport,mrt,latitude,longitude,images"
 	
 	def pick12Row(p):
 		numsofRows=dbConnect("SELECT COUNT(*) FROM spotinfo10")
-		# print(numsofRows)
 		nokwLastPage=numsofRows[0][0]//12
-		# print("無KW最後一頁:",nokwLastPage)	
 
 		nokwSelect="SELECT "+col+" FROM spotinfo10 ORDER BY id LIMIT 12 offset"+" "+str(p*12)
 		nokwDB=dbConnect(nokwSelect)
-		# print("撈到資料:",nokwDB,"資料型態:",type(nokwDB),"長度:",len(nokwDB))
 		spotData=[]
 		for n in range(0,len(nokwDB)):
-			# print("資料:",nokwDB[n][0],nokwDB[n][1],nokwDB[n][8])
 			idDB = nokwDB[n][0]
 			nameDB = nokwDB[n][1]
 			categoryDB = nokwDB[n][2]
@@ -129,7 +122,6 @@ def attractionsAPI():
 			latitudeDB = nokwDB[n][7]
 			longitudeDB = nokwDB[n][8]
 			imagesDB = nokwDB[n][9].split(",")
-			# print("imagesDB內容:", imagesDB,"類型:",type(imagesDB))
 			spotData.append({
 				"id":idDB,
 				"name":nameDB,
@@ -142,26 +134,18 @@ def attractionsAPI():
 				"longitude":float(longitudeDB),
 				"images":imagesDB[1:len(imagesDB)]
 				})
-		# print("spotData內容:",spotData, type(spotData))
-		# print("spotData資料長度:",len(spotData))
 		result = [p+1,spotData,nokwLastPage]
-		# print("裡面的result:",result)
 		return (result)
 		
 
 	
 	def pick12RowKW(p):
 		numsofRows=dbConnect("SELECT COUNT(*) FROM spotinfo10 WHERE name LIKE '%"+kw+"%'")
-		# print("回傳:",numsofRows[0])
 		KWlastPage=numsofRows[0][0]//12
-		# print("無KW最後一頁:",KWlastPage)
 		
 
 		kwSelect="SELECT "+col+" FROM spotinfo10 WHERE name LIKE '%"+kw+"%'" + " LIMIT 12 offset"+" "+str(p*12)
-		# print(kwSelect)
 		kwDB=dbConnect(kwSelect)
-		# print("關鍵字:",kwDB)
-		# print(len(kwDB))
 
 		kwspotData=[]
 		for n in range(0,len(kwDB)):
@@ -178,7 +162,6 @@ def attractionsAPI():
 				"longitude":float(kwDB[n][8]),
 				"images":imagesDB2[1:len(imagesDB2)]
 				})
-		# print("kwspotData的長度:",len(kwspotData))
 		dataPnKW = [p+1,kwspotData,KWlastPage]
 		return (dataPnKW)
 		
@@ -188,7 +171,6 @@ def attractionsAPI():
 # 判斷 1-1 : kw有輸入值
 	if kw != None:
 		dataPnKW=pick12RowKW(p)
-		# print("有輸入關鍵字。kw是:",kw,"p是:",p,"最後一頁:",dataPnKW[2])
 		# 判斷 1-2 : 頁數輸入值為整數 
 		if p or p == 0:
 			# 判斷 1-3 : p < 最後一頁
@@ -225,11 +207,8 @@ def attractionsAPI():
 @app.route("/api/attraction/<attractionID>")
 def attractionAPI(attractionID):
 	col="id,name,category,description,address,transport,mrt,latitude,longitude,images"
-	# print("id為:",attractionID,"id換數字",(int(attractionID)))
+	print("id為:",attractionID,"id換數字",(int(attractionID)))
 	numsofRows=dbConnect("SELECT COUNT(*) FROM spotinfo10")
-
-
-	# print("資料筆數:",numsofRows[0],type(numsofRows[0]))
 	
 	# 判斷 1 : 輸入值為整數
 	if int(attractionID):
@@ -238,10 +217,7 @@ def attractionAPI(attractionID):
 			idSelect="SELECT "+col+" FROM spotinfo10 WHERE id = "+attractionID+""
 			dataDBId=dbConnect(idSelect)
 		
-			# print(idSelect)
-			# print(dataDBId)
 			for x in dataDBId:
-				# print("x[0]:",x[0],x[1],x[2],x[3])
 				imgs=x[9].split(',')
 		
 				getData={"data":{
@@ -272,7 +248,6 @@ def attractionAPI(attractionID):
 @app.errorhandler(404)
 def page_not_found(error):
 	msg=request.args.get("message","400自訂的錯誤訊息")
-	# message={"error": True,"message": "400自訂的錯誤訊息"}
 	message={"error": True,"message": msg}
 	return jsonify(message), 400
 
@@ -284,14 +259,6 @@ def page_not_found(error):
 	return jsonify(message), 500
 
 
-# ====================================== JWT (待做) ========================================================
-
-import jwt
-
-# 新增member表單
-# mycursor.execute("CREATE TABLE member (id bigint PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255) NOT NULL,email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)")
-# mydb.commit()
-
 
 #======================================= Member System APIs ===============================================
 # 註冊 post  
@@ -301,10 +268,8 @@ def createUser():
 	name=data['name']
 	email=data['email']
 	password=data['password']
-	# print("使用者註冊輸入:",name,email,password)
 
 	checkUser=dbConnect("SELECT name FROM member WHERE name="+"'"+name+"'")
-	# print("checkuser:",checkUser)
 	
 	if len(checkUser) != 0: # db裡面有資料
 		for i in checkUser: 
@@ -312,13 +277,11 @@ def createUser():
 				print("資料庫裡有:"+name+"")
 				return jsonify({"error": True,"message": "帳號已經被註冊"})
 			else: # 有資料但不符合 user
-				# target="INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password)
 				dbConnect_insert(name,email,password)
 				print("已將"+name+"資料存入資料庫")
 				return  jsonify({"ok": True})
 				# return redirect ("/")
 	else: # db裡面沒有資料
-		# target="INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password)
 		dbConnect_insert(name,email,password)
 		print("已將"+name+"資料存入資料庫")
 		return jsonify({"ok": True})
@@ -370,7 +333,6 @@ def getUserStatus():
 		print("session中有使用者，使用者名稱:",nameSession)
 		target="SELECT id, email,name FROM member WHERE name="+"'"+nameSession+"'"
 		Data=dbConnect(target)
-		# print("Data是:",Data)
 
 		idDB = Data[0][0]
 		emailDB= Data[0][1]
@@ -399,7 +361,6 @@ def dbInsert_table(sql,value):
 		mycursor.execute(sql,value)
 		mydb.commit()
 		return "commit done"
-	# mycursor.execute("INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password))
 	except Error as e:
 		print("資料庫連線失敗:", e)
 	finally:
@@ -415,7 +376,6 @@ def dbDelete(sql):
 		mycursor.execute(sql)
 		mydb.commit()
 		return "commit done"
-	# mycursor.execute("INSERT INTO member (name, email, password) VALUES (%s,%s,%s)",(name, email, password))
 	except Error as e:
 		print("資料庫連線失敗:", e)
 	finally:
@@ -516,9 +476,7 @@ def createNumber():
 	currentDay = datetime.now().day
 	currentMonth = datetime.now().month
 	currentYear = datetime.now().year
-	# print("test日期:",currentDay,type(currentDay))
 	n=dbConnectOne("SELECT COUNT(*) FROM triporder")[0]
-	# print("n:",n)
 	result=str(currentYear)+str(currentMonth)+str(currentDay)+"00"+str(n+1)
 	print("num:",result)
 	return result
@@ -566,7 +524,6 @@ def createOrders():
 		prime=orderData["prime"]
 		status=1
 		number=createNumber()
-		# print("post內容:",order,contact,"prime密鑰:",prime,"訂單狀態:",status,number,"contact類型:",type(contact))
 		sql="INSERT INTO triporder (number,trip,contact,status) VALUES (%s,%s,%s,%s)"
 		value=(number,order,contact,status)
 		result=addOrderData(sql,value)
@@ -579,7 +536,6 @@ def createOrders():
 				}),400
 		else:
 			# 連線 TAPPAY 準備付款
-			print("p-key:",os.environ.get('PAY_KEY'))
 			url="https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
 			headers={ 
 			"Content-Type": "application/json",
@@ -588,7 +544,7 @@ def createOrders():
 			data={
 			"prime": prime,
 			"partner_key": os.environ.get('PAY_KEY'),
-			"merchant_id": "runformoneytw2022_CTBC",
+			"merchant_id": os.environ.get('MERCHANT_ID'),
 			"details":"TapPay Test",
 			"amount": orderData["order"]["price"],
 			"cardholder": {
@@ -605,8 +561,6 @@ def createOrders():
 				print("payment success.")
 				updateSql="UPDATE triporder SET status=1 WHERE number="+number+""
 				updateResult=updateOrderData(updateSql)
-				# print(updateResult)
-				# 付款成功，刪掉預定行程
 				sql="DELETE FROM booking"
 				dbDelete(sql)
 				return jsonify({
@@ -639,15 +593,10 @@ def getOrder(orderNumber):
 		return jsonify({"error": True,"message": "未登入系統，拒絕存取"}),403
 	else:
 		print("session有使用者")
-		# sql="SELECT number,trip,contact,status FROM triporder WHERE number="+orderNumber+""
 		sql="SELECT number,trip,contact,status FROM triporder WHERE number="+orderNumber+""
 		getOrder=dbConnectOne(sql)
-		# print("getOrder:",getOrder[0],"1是:",getOrder[1],"1type:",type(getOrder[1]),"2是:",getOrder[2],"3是:",getOrder[3])
-		# print("測試:",json.jumps(getORder),"測試type:",type(getOrder),"測試2:",json.loads(getORder),"測試type:",type(getOrder))
-		# print("測試type:",type(dict(getOrder)))
 		newOrder1=eval(getOrder[1])  # tuple=>dict
 		newOrder2=eval(getOrder[2])
-		# print("測試type:",type(newOrder1))
 		getOrderFinal={
 			"data": {
 				"number": getOrder[0],
@@ -662,5 +611,5 @@ def getOrder(orderNumber):
 		print("getOrderFinal:",getOrderFinal)
 		return jsonify(getOrderFinal),200
 
-app.run(host='0.0.0.0',port=3000)
-# app.run(port=3000)
+# app.run(host='0.0.0.0',port=3000)
+app.run(port=3000)
