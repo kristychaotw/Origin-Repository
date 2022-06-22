@@ -11,7 +11,13 @@ Travel Booking Website for people who want to have a day trip around Taipei, Tai
 2. **Search by keywords** Combined with infinite scroll to maximize the UX experience  
 3. **Booking and Payment transactions** Using a third-party service "TapPay" for credit card transactions.  
 
+### Technical Highlights
 
+* Applied the search bar and carousel for a better user experience
+* Limited data fetching works using infinite scroll
+* Built connections between front-end and back-end using RESTful APIs
+* Implemented APIs of locations and credit card transactions.
+* Used MySQL to store users’ data and deployed the website on Amazon EC2
 
 ## Guide
 1. Search for the travel destination
