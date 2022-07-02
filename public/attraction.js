@@ -234,9 +234,10 @@ function createBooking() {
       })
       .then((data) => {
         if (data["ok"]) {
-          console.log("儲存預定");
+          alert("已選擇行程，即將跳轉到預定付款頁面");
+          location.href="/booking"
         } else {
-          console.log(data["message"]);
+          alert(data["message"]);
         }
         createBookingStatus == false;
       })
@@ -275,13 +276,20 @@ function checkBookingData() {
   if (date != "") {
     let selectDate = new Date(date);
     let today = new Date();
-    if (selectDate.getTime() > today.getTime()) {
-      // 日期可選，呼叫存入預定
-      return createBooking();
+    let threeMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 3,
+      today.getDate()
+    );
+    if (selectDate.getTime() < today.getTime()) {
+      return alert("日期已過，請重新選擇日期");
+    } else if (selectDate.getTime() > threeMonth.getTime()) {
+      return alert("目前僅提供預定三個月內的行程，請重新選擇日期");
     } else {
-      return alert("日期已過，請選擇新日期");
+      // 日期可選，呼叫存入預定行程
+      return createBooking();
     }
   } else {
-    return alert("日期空白，請重新選擇");
+    return alert("日期空白，請重新選擇日期");
   }
 }

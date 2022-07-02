@@ -51,7 +51,6 @@ function onSubmit(event) {
 
   // 確認是否可以 getPrime
   if (tappayStatus.canGetPrime === false) {
-    console.log("can not get prime");
     alert("請完整填寫所有欄位");
     return;
   }
